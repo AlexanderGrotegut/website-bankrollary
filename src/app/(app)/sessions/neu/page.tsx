@@ -39,7 +39,7 @@ export default async function NewSessionPage() {
         <aside className="panel self-start">
           <h2>Missing a platform?</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">Add your own provider or venue.</p>
-          <div className="mt-5"><PlatformForm /></div>
+          <div className="mt-5"><PlatformForm compact /></div>
           <div className="my-6 border-t border-[var(--border)]" />
           <h2>Missing a game type?</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">

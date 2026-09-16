@@ -67,8 +67,8 @@ export default async function SessionsPage({
       <header className="page-header">
         <div><p className="eyebrow">Session archive</p><h1>All sessions</h1><p>Search, filter and edit your history.</p></div>
         <div className="flex gap-3">
-          <Link href="/sessions/export" className="button-secondary"><Download size={17} /> CSV</Link>
-          <Link href="/sessions/neu" className="button-primary"><Plus size={18} /> New session</Link>
+          <Link href="/sessions/export" className="button-secondary" prefetch={false}><Download size={17} /> CSV</Link>
+          <Link href="/sessions/neu" className="button-primary" prefetch={false}><Plus size={18} /> New session</Link>
         </div>
       </header>
 
@@ -80,7 +80,7 @@ export default async function SessionsPage({
         <label className="field"><span>From</span><input name="from" type="date" defaultValue={query.from} /></label>
         <label className="field"><span>To</span><input name="to" type="date" defaultValue={query.to} /></label>
         <button className="button-secondary self-end">Apply filters</button>
-        <Link href="/sessions" className="text-link self-center">Reset</Link>
+        <Link href="/sessions" className="text-link self-center" prefetch={false}>Reset</Link>
       </form>
 
       <section className="panel mt-6">
@@ -106,7 +106,7 @@ export default async function SessionsPage({
                     <td>
                       {session.endedAt ? (
                         <div className="row-actions">
-                          <Link href={`/sessions/${session.id}`} title="Edit"><Pencil size={16} /></Link>
+                          <Link href={`/sessions/${session.id}`} title="Edit" prefetch={false}><Pencil size={16} /></Link>
                           <form action={deleteSessionAction}><input type="hidden" name="id" value={session.id} /><button title="Delete"><Trash2 size={16} /></button></form>
                         </div>
                       ) : <FinishSessionForm id={session.id} />}

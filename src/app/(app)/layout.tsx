@@ -1,6 +1,5 @@
 import { AppNav } from "@/components/AppNav";
 import { requireUser } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 
 export default async function ProtectedLayout({
   children,
@@ -8,11 +7,6 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const user = await requireUser();
-  await prisma.userSettings.upsert({
-    where: { userId: user.id },
-    create: { userId: user.id },
-    update: {},
-  });
 
   return (
     <div className="app-shell">

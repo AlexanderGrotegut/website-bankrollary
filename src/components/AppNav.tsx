@@ -24,7 +24,7 @@ export function AppNav({ email }: { email: string }) {
 
   return (
     <aside className="app-nav">
-      <Link href="/dashboard" className="brand px-3">
+      <Link href="/dashboard" className="brand px-3" prefetch={false}>
         <span className="brand-mark">B</span>
         <span>Bankrollary</span>
       </Link>
@@ -33,7 +33,12 @@ export function AppNav({ email }: { email: string }) {
           const active =
             pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
           return (
-            <Link className={`nav-link ${active ? "nav-link-active" : ""}`} href={href} key={href}>
+            <Link
+              className={`nav-link ${active ? "nav-link-active" : ""}`}
+              href={href}
+              prefetch={false}
+              key={href}
+            >
               <Icon size={19} />
               <span>{label}</span>
             </Link>

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { enforceRateLimit } from "@/lib/rateLimit";
 import { createServerClient } from "@/lib/supabase/server";
+import { ensureUserSettings } from "@/lib/userSettings";
 
 export type AuthState = { error?: string; message?: string };
 
@@ -53,7 +54,10 @@ export async function registerAction(
   });
 
   if (error) return { error: "Registration failed. Check your details." };
-  if (data.session) redirect("/dashboard");
+  if (data.session && data.user) {
+    await ensureUserSettings(data.user.id);
+    redirect("/dashboard");
+  }
   return { message: "Please confirm your email address." };
 }
 
@@ -69,11 +73,12 @@ export async function loginAction(
   if (rateLimitError) return { error: rateLimitError };
 
   const supabase = await createServerClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: email.data,
     password: password.data,
   });
   if (error) return { error: "Email address or password is incorrect." };
+  if (data.user) await ensureUserSettings(data.user.id);
   redirect("/dashboard");
 }
 

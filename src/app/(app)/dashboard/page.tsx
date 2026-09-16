@@ -16,6 +16,12 @@ const periods: { value: Period; label: string }[] = [
   { value: "all", label: "All time" },
 ];
 
+const transactionLabels = {
+  STARTING_BALANCE: "Starting balance",
+  DEPOSIT: "Deposit",
+  WITHDRAWAL: "Withdrawal",
+};
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -27,16 +33,39 @@ export default async function DashboardPage({
     ? (query.period as Period)
     : "month";
   const [settings, sessions, transactions] = await Promise.all([
-    prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
+    prisma.userSettings.findUniqueOrThrow({
+      where: { userId: user.id },
+      select: { defaultCurrency: true },
+    }),
     prisma.session.findMany({
       where: { userId: user.id },
-      include: {
+      select: {
+        id: true,
+        currency: true,
+        startedAt: true,
+        endedAt: true,
+        buyIn: true,
+        cashOut: true,
+        convertedCurrency: true,
+        convertedBuyIn: true,
+        convertedCashOut: true,
+        convertedProfit: true,
         platform: { select: { name: true } },
         gameCategory: { select: { name: true } },
       },
       orderBy: { startedAt: "desc" },
     }),
-    prisma.bankrollTransaction.findMany({ where: { userId: user.id } }),
+    prisma.bankrollTransaction.findMany({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        amount: true,
+        currency: true,
+        occurredAt: true,
+        type: true,
+        note: true,
+      },
+    }),
   ]);
   const analytics = buildAnalytics(
     sessions.map((session) => ({
@@ -83,6 +112,20 @@ export default async function DashboardPage({
       })),
     periodStart(period),
   );
+  const recentActivity = [
+    ...sessions.map((session) => ({
+      kind: "session" as const,
+      date: session.endedAt ?? session.startedAt,
+      session,
+    })),
+    ...transactions.map((transaction) => ({
+      kind: "transaction" as const,
+      date: transaction.occurredAt,
+      transaction,
+    })),
+  ]
+    .sort((first, second) => second.date.getTime() - first.date.getTime())
+    .slice(0, 6);
 
   return (
     <>
@@ -92,7 +135,7 @@ export default async function DashboardPage({
           <h1>Your bankroll at a glance</h1>
           <p>Understand results, spot trends and stay focused.</p>
         </div>
-        <Link href="/sessions/neu" className="button-primary">
+        <Link href="/sessions/neu" className="button-primary" prefetch={false}>
           <Plus size={18} /> New session
         </Link>
       </header>
@@ -103,6 +146,7 @@ export default async function DashboardPage({
             <Link
               className={period === value ? "active" : ""}
               href={`?period=${value}&currency=${selected.currency}`}
+              prefetch={false}
               key={value}
             >
               {label}
@@ -114,6 +158,7 @@ export default async function DashboardPage({
             <Link
               className={`currency-chip ${currency === selected.currency ? "active" : ""}`}
               href={`?period=${period}&currency=${currency}`}
+              prefetch={false}
               key={currency}
             >
               {currency}
@@ -144,14 +189,31 @@ export default async function DashboardPage({
 
       <section className="panel mt-6">
         <div className="panel-heading">
-          <div><h2>Recent sessions</h2><p>Your latest activity</p></div>
-          <Link href="/sessions" className="text-link">View all</Link>
+          <div><h2>Recent activity</h2><p>Sessions, deposits and withdrawals</p></div>
+          <Link href="/sessions" className="text-link" prefetch={false}>View all</Link>
         </div>
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Type</th><th>Platform</th><th>Date</th><th>Duration</th><th>P/L</th></tr></thead>
+            <thead><tr><th>Activity</th><th>Platform / note</th><th>Date</th><th>Duration</th><th>Amount</th></tr></thead>
             <tbody>
-              {sessions.slice(0, 5).map((session) => {
+              {recentActivity.map((activity) => {
+                if (activity.kind === "transaction") {
+                  const { transaction } = activity;
+                  const amount =
+                    transaction.type === "WITHDRAWAL"
+                      ? -Number(transaction.amount)
+                      : Number(transaction.amount);
+                  return (
+                    <tr key={`transaction-${transaction.id}`}>
+                      <td>{transactionLabels[transaction.type]}</td>
+                      <td>{transaction.note || "Bankroll transaction"}</td>
+                      <td>{transaction.occurredAt.toLocaleDateString("en-GB")}</td>
+                      <td>—</td>
+                      <td className={toneClass(amount)}>{formatMoney(amount, transaction.currency)}</td>
+                    </tr>
+                  );
+                }
+                const { session } = activity;
                 const metrics = calculateSessionMetrics({
                   ...session,
                   buyIn: Number(session.buyIn),
@@ -167,7 +229,7 @@ export default async function DashboardPage({
                   </tr>
                 );
               })}
-              {!sessions.length && <tr><td colSpan={5} className="empty-row">No sessions recorded yet.</td></tr>}
+              {!recentActivity.length && <tr><td colSpan={5} className="empty-row">No activity recorded yet.</td></tr>}
             </tbody>
           </table>
         </div>
