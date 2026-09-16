@@ -123,7 +123,7 @@ export default async function DashboardPage({
       </div>
 
       <section className="metric-grid mt-6">
-        <Metric icon={Wallet} label="Current bankroll" value={formatMoney(selected.bankroll, selected.currency)} />
+        <Metric icon={Wallet} label="Current bankroll" value={formatMoney(selected.bankroll, selected.currency)} tone={selected.bankroll} />
         <Metric icon={TrendingUp} label="Profit / loss" value={formatMoney(selected.profit, selected.currency)} tone={selected.profit} />
         <Metric icon={Percent} label="ROI" value={selected.roi === null ? "—" : `${selected.roi.toFixed(1)} %`} tone={selected.roi} />
         <Metric icon={Clock3} label="Hourly rate" value={selected.hourlyRate === null ? "—" : formatMoney(selected.hourlyRate, selected.currency)} tone={selected.hourlyRate} />
