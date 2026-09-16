@@ -42,7 +42,15 @@ export async function saveSessionAction(
   const gameCategory = await prisma.gameCategory.findFirst({
     where: {
       id: parsed.data.gameCategoryId,
-      OR: [{ userId: null }, { userId: user.id }],
+      OR: [
+        { userId: user.id },
+        {
+          userId: null,
+          ...(existing?.gameCategoryId === parsed.data.gameCategoryId
+            ? {}
+            : { hiddenFor: { none: { userId: user.id } } }),
+        },
+      ],
       ...(existing?.gameCategoryId === parsed.data.gameCategoryId
         ? {}
         : { archivedAt: null }),

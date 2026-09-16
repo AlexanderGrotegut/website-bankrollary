@@ -35,7 +35,13 @@ export default async function SessionsPage({
     prisma.gameCategory.findMany({
       where: {
         archivedAt: null,
-        OR: [{ userId: null }, { userId: user.id }],
+        OR: [
+          { userId: user.id },
+          {
+            userId: null,
+            hiddenFor: { none: { userId: user.id } },
+          },
+        ],
       },
       orderBy: [{ userId: "asc" }, { name: "asc" }],
       select: { id: true, name: true },

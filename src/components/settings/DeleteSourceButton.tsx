@@ -1,7 +1,11 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
-import { deleteGameCategoryAction } from "@/app/actions/gameCategories";
+import { RotateCcw, Trash2 } from "lucide-react";
+import {
+  deleteGameCategoryAction,
+  hideBuiltInGameCategoryAction,
+  restoreBuiltInGameCategoryAction,
+} from "@/app/actions/gameCategories";
 import { deletePlatformAction } from "@/app/actions/platforms";
 
 type Props = {
@@ -47,6 +51,39 @@ export function DeleteGameCategoryButton({ id }: Props) {
       <input type="hidden" name="id" value={id} />
       <button title="Delete game type" aria-label="Delete game type">
         <Trash2 size={16} />
+      </button>
+    </form>
+  );
+}
+
+export function HideBuiltInGameCategoryButton({ id }: Props) {
+  return (
+    <form
+      action={hideBuiltInGameCategoryAction}
+      onSubmit={(event) => {
+        if (
+          !window.confirm(
+            "Remove this built-in game type from your account? Saved sessions will remain unchanged.",
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <input type="hidden" name="id" value={id} />
+      <button title="Remove game type" aria-label="Remove game type">
+        <Trash2 size={16} />
+      </button>
+    </form>
+  );
+}
+
+export function RestoreBuiltInGameCategoryButton({ id }: Props) {
+  return (
+    <form action={restoreBuiltInGameCategoryAction}>
+      <input type="hidden" name="id" value={id} />
+      <button title="Restore game type" aria-label="Restore game type">
+        <RotateCcw size={16} />
       </button>
     </form>
   );

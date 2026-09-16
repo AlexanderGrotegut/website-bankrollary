@@ -61,3 +61,40 @@ export async function deleteGameCategoryAction(formData: FormData) {
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");
 }
+
+export async function hideBuiltInGameCategoryAction(formData: FormData) {
+  const user = await requireUser();
+  const id = z.string().min(1).max(50).safeParse(formData.get("id"));
+  if (!id.success) return;
+
+  const category = await prisma.gameCategory.findFirst({
+    where: { id: id.data, userId: null, archivedAt: null },
+    select: { id: true },
+  });
+  if (!category) return;
+
+  await prisma.hiddenGameCategory.upsert({
+    where: {
+      userId_gameCategoryId: {
+        userId: user.id,
+        gameCategoryId: category.id,
+      },
+    },
+    create: { userId: user.id, gameCategoryId: category.id },
+    update: {},
+  });
+  revalidatePath("/sessions");
+  revalidatePath("/einstellungen");
+}
+
+export async function restoreBuiltInGameCategoryAction(formData: FormData) {
+  const user = await requireUser();
+  const id = z.string().min(1).max(50).safeParse(formData.get("id"));
+  if (!id.success) return;
+
+  await prisma.hiddenGameCategory.deleteMany({
+    where: { userId: user.id, gameCategoryId: id.data },
+  });
+  revalidatePath("/sessions");
+  revalidatePath("/einstellungen");
+}

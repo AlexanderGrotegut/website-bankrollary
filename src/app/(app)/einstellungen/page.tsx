@@ -5,6 +5,8 @@ import {
 import {
   DeleteGameCategoryButton,
   DeletePlatformButton,
+  HideBuiltInGameCategoryButton,
+  RestoreBuiltInGameCategoryButton,
 } from "@/components/settings/DeleteSourceButton";
 import {
   EmailForm,
@@ -28,12 +30,28 @@ const transactionLabels = {
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const [settings, platforms, customCategories, transactions] = await Promise.all([
+  const [
+    settings,
+    platforms,
+    builtInCategories,
+    customCategories,
+    transactions,
+  ] = await Promise.all([
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
     prisma.platform.findMany({
       where: { userId: user.id, archivedAt: null },
       orderBy: { name: "asc" },
       include: { _count: { select: { sessions: true } } },
+    }),
+    prisma.gameCategory.findMany({
+      where: { userId: null, archivedAt: null },
+      orderBy: { name: "asc" },
+      include: {
+        hiddenFor: {
+          where: { userId: user.id },
+          select: { userId: true },
+        },
+      },
     }),
     prisma.gameCategory.findMany({
       where: { userId: user.id, archivedAt: null },
@@ -68,6 +86,22 @@ export default async function SettingsPage() {
           </div>
         </section>
       </div>
+      <section className="panel mt-6">
+        <div className="panel-heading"><div><h2>Built-in game types</h2><p>Remove types only from your own account</p></div></div>
+        <div className="settings-list">
+          {builtInCategories.map((category) => {
+            const hidden = category.hiddenFor.length > 0;
+            return (
+              <div key={category.id}>
+                <span><strong>{category.name}</strong><small>{hidden ? "Removed from your selections" : "Available in your selections"}</small></span>
+                {hidden
+                  ? <RestoreBuiltInGameCategoryButton id={category.id} />
+                  : <HideBuiltInGameCategoryButton id={category.id} />}
+              </div>
+            );
+          })}
+        </div>
+      </section>
       <section className="panel mt-6">
         <div className="panel-heading"><div><h2>Custom game types</h2><p>Only you can see and select the game types you create</p></div></div>
         <GameCategoryForm />

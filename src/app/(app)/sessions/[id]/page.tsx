@@ -25,8 +25,12 @@ export default async function EditSessionPage({
     prisma.gameCategory.findMany({
       where: {
         OR: [
-          { archivedAt: null, userId: null },
           { archivedAt: null, userId: user.id },
+          {
+            archivedAt: null,
+            userId: null,
+            hiddenFor: { none: { userId: user.id } },
+          },
           { sessions: { some: { id, userId: user.id } } },
         ],
       },

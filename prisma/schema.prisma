@@ -47,11 +47,22 @@ model GameCategory {
   normalizedName String
   archivedAt     DateTime?
   sessions       Session[]
+  hiddenFor      HiddenGameCategory[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   @@unique([userId, normalizedName])
   @@index([userId, archivedAt])
+}
+
+model HiddenGameCategory {
+  userId         String
+  gameCategoryId String
+  gameCategory   GameCategory @relation(fields: [gameCategoryId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@id([userId, gameCategoryId])
+  @@index([gameCategoryId])
 }
 
 model Session {
