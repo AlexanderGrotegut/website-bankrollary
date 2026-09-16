@@ -17,6 +17,10 @@ type AnalyticsSession = {
   currency: string;
   startedAt: Date;
   endedAt: Date | null;
+  convertedCurrency?: string | null;
+  convertedBuyIn?: number | null;
+  convertedCashOut?: number | null;
+  convertedProfit?: number | null;
 };
 
 type AnalyticsTransaction = {
@@ -51,20 +55,41 @@ export function buildAnalytics(
   defaultCurrency: string,
 ) {
   const start = periodStart(period);
+  const effectiveSessions = sessions.map(toEffectiveSession);
   const currencies = new Set([
     defaultCurrency,
-    ...sessions.map((session) => session.currency),
+    ...effectiveSessions.map((session) => session.currency),
     ...transactions.map((transaction) => transaction.currency),
   ]);
 
   return [...currencies].map((currency) =>
     buildCurrencyAnalytics(
       currency,
-      sessions.filter((session) => session.currency === currency),
+      effectiveSessions.filter((session) => session.currency === currency),
       transactions.filter((transaction) => transaction.currency === currency),
       start,
     ),
   );
+}
+
+function toEffectiveSession(session: AnalyticsSession): AnalyticsSession {
+  if (
+    !session.convertedCurrency ||
+    session.convertedBuyIn === null ||
+    session.convertedBuyIn === undefined ||
+    session.convertedCashOut === null ||
+    session.convertedCashOut === undefined
+  ) {
+    return session;
+  }
+
+  return {
+    buyIn: session.convertedBuyIn,
+    cashOut: session.convertedCashOut,
+    currency: session.convertedCurrency,
+    startedAt: session.startedAt,
+    endedAt: session.endedAt,
+  };
 }
 
 function buildCurrencyAnalytics(

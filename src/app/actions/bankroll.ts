@@ -14,7 +14,7 @@ export async function saveTransactionAction(
   const user = await requireUser();
   const parsed = transactionSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Ungültige Buchung." };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid transaction." };
   }
 
   await prisma.bankrollTransaction.create({
@@ -22,7 +22,7 @@ export async function saveTransactionAction(
   });
   revalidatePath("/dashboard");
   revalidatePath("/einstellungen");
-  return { success: "Buchung gespeichert." };
+  return { success: "Transaction saved." };
 }
 
 export async function deleteTransactionAction(formData: FormData) {
@@ -43,7 +43,7 @@ export async function saveSettingsAction(
 ): Promise<FormState> {
   const user = await requireUser();
   const parsed = settingsSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Ungültige Standardwährung." };
+  if (!parsed.success) return { error: "Invalid default currency." };
 
   await prisma.userSettings.upsert({
     where: { userId: user.id },
@@ -53,5 +53,5 @@ export async function saveSettingsAction(
   revalidatePath("/dashboard");
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");
-  return { success: "Einstellungen gespeichert." };
+  return { success: "Settings saved." };
 }

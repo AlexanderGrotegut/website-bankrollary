@@ -8,15 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum GameType {
-  POKER
-  SPORTS_BETTING
-  CASINO
-  BLACKJACK
-  ROULETTE
-  SLOTS
-}
-
 enum TransactionType {
   STARTING_BALANCE
   DEPOSIT
@@ -49,23 +40,46 @@ model Platform {
   @@index([userId, archivedAt])
 }
 
+model GameCategory {
+  id             String    @id @default(cuid())
+  userId         String?
+  name           String
+  normalizedName String
+  archivedAt     DateTime?
+  sessions       Session[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, normalizedName])
+  @@index([userId, archivedAt])
+}
+
 model Session {
-  id        String    @id @default(cuid())
-  userId    String
-  type      GameType
-  platformId String
-  platform  Platform  @relation(fields: [platformId], references: [id])
-  currency  String    @db.Char(3)
-  startedAt DateTime
-  endedAt   DateTime?
-  buyIn     Decimal   @db.Decimal(14, 2)
-  cashOut   Decimal?  @db.Decimal(14, 2)
-  notes     String?   @db.VarChar(500)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                       String       @id @default(cuid())
+  userId                   String
+  gameCategoryId           String
+  gameCategory             GameCategory @relation(fields: [gameCategoryId], references: [id])
+  platformId               String
+  platform                 Platform     @relation(fields: [platformId], references: [id])
+  currency                 String       @db.Char(3)
+  startedAt                DateTime
+  endedAt                  DateTime?
+  buyIn                    Decimal      @db.Decimal(14, 2)
+  cashOut                  Decimal?     @db.Decimal(14, 2)
+  convertToDefaultCurrency Boolean      @default(false)
+  exchangeRate             Decimal?     @db.Decimal(20, 10)
+  exchangeRateDate         DateTime?
+  convertedCurrency        String?      @db.Char(3)
+  convertedBuyIn           Decimal?     @db.Decimal(14, 2)
+  convertedCashOut         Decimal?     @db.Decimal(14, 2)
+  convertedProfit          Decimal?     @db.Decimal(14, 2)
+  notes                    String?      @db.VarChar(500)
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
 
   @@index([userId, startedAt])
   @@index([userId, currency])
+  @@index([gameCategoryId])
   @@index([platformId])
 }
 

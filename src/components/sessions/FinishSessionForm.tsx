@@ -10,7 +10,7 @@ export function FinishSessionForm({ id }: { id: string }) {
     <form action={action} className="flex flex-wrap items-center justify-end gap-2">
       <input type="hidden" name="id" value={id} />
       <input className="small-input" name="cashOut" type="number" min="0" step="0.01" placeholder="Cash-out" required />
-      <button className="button-small" disabled={pending}>{pending ? "…" : "Beenden"}</button>
+      <button className="button-small" disabled={pending}>{pending ? "…" : "Complete"}</button>
       {state.error && <small className="w-full text-right negative">{state.error}</small>}
     </form>
   );

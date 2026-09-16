@@ -8,11 +8,11 @@ import { createServerClient } from "@/lib/supabase/server";
 
 export type AuthState = { error?: string; message?: string };
 
-const emailSchema = z.email("Bitte gib eine gültige E-Mail-Adresse ein.");
+const emailSchema = z.email("Enter a valid email address.");
 const passwordSchema = z
   .string()
-  .min(8, "Das Passwort muss mindestens 8 Zeichen haben.")
-  .max(72, "Das Passwort ist zu lang.");
+  .min(8, "Password must be at least 8 characters.")
+  .max(72, "Password is too long.");
 
 async function clientIp() {
   const requestHeaders = await headers();
@@ -28,7 +28,7 @@ async function limit(scope: string, email: string) {
     await enforceRateLimit(scope, [await clientIp(), email]);
     return null;
   } catch (error) {
-    return error instanceof Error ? error.message : "Zu viele Versuche.";
+    return error instanceof Error ? error.message : "Too many attempts.";
   }
 }
 
@@ -52,9 +52,9 @@ export async function registerAction(
     options: { emailRedirectTo: `${appUrl}/auth/callback` },
   });
 
-  if (error) return { error: "Registrierung fehlgeschlagen. Prüfe deine Angaben." };
+  if (error) return { error: "Registration failed. Check your details." };
   if (data.session) redirect("/dashboard");
-  return { message: "Bitte bestätige deine E-Mail-Adresse." };
+  return { message: "Please confirm your email address." };
 }
 
 export async function loginAction(
@@ -63,7 +63,7 @@ export async function loginAction(
 ): Promise<AuthState> {
   const email = emailSchema.safeParse(formData.get("email"));
   const password = z.string().min(1).safeParse(formData.get("password"));
-  if (!email.success || !password.success) return { error: "Ungültige Eingaben." };
+  if (!email.success || !password.success) return { error: "Invalid credentials." };
 
   const rateLimitError = await limit("login", email.data);
   if (rateLimitError) return { error: rateLimitError };
@@ -73,7 +73,7 @@ export async function loginAction(
     email: email.data,
     password: password.data,
   });
-  if (error) return { error: "E-Mail-Adresse oder Passwort ist falsch." };
+  if (error) return { error: "Email address or password is incorrect." };
   redirect("/dashboard");
 }
 
@@ -89,7 +89,7 @@ export async function forgotPasswordAction(
 ): Promise<AuthState> {
   const email = emailSchema.safeParse(formData.get("email"));
   const message =
-    "Falls ein Konto existiert, erhältst du eine E-Mail zum Zurücksetzen.";
+    "If an account exists, you will receive a password reset email.";
   if (!email.success) return { message };
   if (await limit("forgot", email.data)) return { message };
 
@@ -110,6 +110,6 @@ export async function resetPasswordAction(
 
   const supabase = await createServerClient();
   const { error } = await supabase.auth.updateUser({ password: password.data });
-  if (error) return { error: "Das Passwort konnte nicht geändert werden." };
+  if (error) return { error: "The password could not be updated." };
   redirect("/dashboard");
 }

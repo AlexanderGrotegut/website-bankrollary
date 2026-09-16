@@ -14,24 +14,24 @@ type Mode = "login" | "register" | "forgot" | "reset";
 
 const content = {
   login: {
-    title: "Willkommen zurück",
-    subtitle: "Melde dich an und behalte deine Bankroll im Blick.",
-    button: "Anmelden",
+    title: "Welcome back",
+    subtitle: "Sign in and keep your bankroll in view.",
+    button: "Sign in",
   },
   register: {
-    title: "Account erstellen",
-    subtitle: "Deine Sessions. Deine Zahlen. Deine Entscheidungen.",
-    button: "Kostenlos registrieren",
+    title: "Create your account",
+    subtitle: "Your sessions. Your numbers. Your decisions.",
+    button: "Create free account",
   },
   forgot: {
-    title: "Passwort vergessen",
-    subtitle: "Wir senden dir einen sicheren Link zum Zurücksetzen.",
-    button: "Link anfordern",
+    title: "Forgot your password?",
+    subtitle: "We will send you a secure reset link.",
+    button: "Request reset link",
   },
   reset: {
-    title: "Neues Passwort",
-    subtitle: "Wähle ein neues Passwort mit mindestens 8 Zeichen.",
-    button: "Passwort speichern",
+    title: "New password",
+    subtitle: "Choose a new password with at least 8 characters.",
+    button: "Save password",
   },
 } satisfies Record<Mode, { title: string; subtitle: string; button: string }>;
 
@@ -63,13 +63,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
       <form action={action} className="mt-8 space-y-5">
         {showEmail && (
           <label className="field">
-            <span>E-Mail-Adresse</span>
+            <span>Email address</span>
             <input name="email" type="email" autoComplete="email" required />
           </label>
         )}
         {showPassword && (
           <label className="field">
-            <span>Passwort</span>
+            <span>Password</span>
             <input
               name="password"
               type="password"
@@ -82,20 +82,20 @@ export function AuthForm({ mode }: { mode: Mode }) {
         {state.error && <p className="form-error">{state.error}</p>}
         {state.message && <p className="form-success">{state.message}</p>}
         <button className="button-primary w-full" disabled={pending}>
-          {pending ? "Bitte warten …" : copy.button}
+          {pending ? "Please wait …" : copy.button}
         </button>
       </form>
 
       <div className="mt-6 flex justify-between text-sm text-[var(--muted)]">
         {mode === "login" && (
           <>
-            <Link href="/registrieren">Account erstellen</Link>
-            <Link href="/passwort-vergessen">Passwort vergessen?</Link>
+            <Link href="/registrieren">Create account</Link>
+            <Link href="/passwort-vergessen">Forgot password?</Link>
           </>
         )}
-        {mode === "register" && <Link href="/login">Schon registriert? Anmelden</Link>}
+        {mode === "register" && <Link href="/login">Already registered? Sign in</Link>}
         {(mode === "forgot" || mode === "reset") && (
-          <Link href="/login">Zurück zur Anmeldung</Link>
+          <Link href="/login">Back to sign in</Link>
         )}
       </div>
     </div>

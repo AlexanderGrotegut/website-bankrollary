@@ -1,6 +1,5 @@
 import { getUser } from "@/lib/auth";
 import { calculateSessionMetrics } from "@/lib/calculations";
-import { GAME_TYPE_LABELS } from "@/lib/domain";
 import { prisma } from "@/lib/prisma";
 
 function csvCell(value: string | number | null) {
@@ -12,16 +11,20 @@ function csvCell(value: string | number | null) {
 
 export async function GET() {
   const user = await getUser();
-  if (!user) return new Response("Nicht autorisiert.", { status: 401 });
+  if (!user) return new Response("Unauthorized.", { status: 401 });
 
   const sessions = await prisma.session.findMany({
     where: { userId: user.id },
-    include: { platform: { select: { name: true } } },
+    include: {
+      platform: { select: { name: true } },
+      gameCategory: { select: { name: true } },
+    },
     orderBy: { startedAt: "desc" },
   });
   const header = [
-    "Typ", "Plattform", "Währung", "Start", "Ende", "Buy-in",
-    "Cash-out", "P/L", "Dauer (Min.)", "ROI (%)", "Stundenlohn", "Notiz",
+    "Game type", "Platform", "Currency", "Start", "End", "Buy-in",
+    "Cash-out", "P/L", "Duration (min.)", "ROI (%)", "Hourly rate",
+    "Converted currency", "Exchange rate", "Converted P/L", "Notes",
   ];
   const rows = sessions.map((session) => {
     const metrics = calculateSessionMetrics({
@@ -30,7 +33,7 @@ export async function GET() {
       cashOut: session.cashOut === null ? null : Number(session.cashOut),
     });
     return [
-      GAME_TYPE_LABELS[session.type],
+      session.gameCategory.name,
       session.platform.name,
       session.currency,
       session.startedAt.toISOString(),
@@ -41,6 +44,9 @@ export async function GET() {
       metrics.durationMinutes,
       metrics.roi,
       metrics.hourlyRate,
+      session.convertedCurrency,
+      session.exchangeRate === null ? null : Number(session.exchangeRate),
+      session.convertedProfit === null ? null : Number(session.convertedProfit),
       session.notes,
     ];
   });

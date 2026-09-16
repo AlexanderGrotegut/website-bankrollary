@@ -20,7 +20,7 @@ export function BankrollChart({
 }) {
   const chartData = data.map((point) => ({
     ...point,
-    label: new Intl.DateTimeFormat("de-DE", {
+    label: new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "short",
     }).format(new Date(point.date)),
@@ -43,7 +43,7 @@ export function BankrollChart({
             tickLine={false}
             tick={{ fill: "var(--muted)", fontSize: 12 }}
             width={64}
-            tickFormatter={(value: number) => Intl.NumberFormat("de-DE", { notation: "compact" }).format(value)}
+            tickFormatter={(value: number) => Intl.NumberFormat("en-US", { notation: "compact" }).format(value)}
           />
           <Tooltip
             cursor={{ stroke: "var(--accent)", strokeDasharray: "4 4" }}

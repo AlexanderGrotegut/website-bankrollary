@@ -14,7 +14,7 @@ export async function createPlatformAction(
   const user = await requireUser();
   const parsed = platformSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Ungültiger Name." };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid name." };
   }
 
   const existing = await prisma.platform.findFirst({
@@ -29,7 +29,7 @@ export async function createPlatformAction(
       data: { archivedAt: null },
     });
   } else if (existing) {
-    return { error: "Diese Plattform existiert bereits." };
+    return { error: "This platform already exists." };
   } else {
     await prisma.platform.create({
       data: { userId: user.id, name: parsed.data.name },
@@ -38,7 +38,7 @@ export async function createPlatformAction(
 
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");
-  return { success: "Plattform gespeichert." };
+  return { success: "Platform saved." };
 }
 
 export async function archivePlatformAction(formData: FormData) {

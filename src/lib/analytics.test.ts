@@ -37,4 +37,30 @@ describe("buildAnalytics", () => {
     expect(dollar?.bankroll).toBe(-20);
     expect(dollar?.profit).toBe(-20);
   });
+
+  it("counts a converted session only in its snapshot currency", () => {
+    const result = buildAnalytics(
+      [
+        {
+          buyIn: 100,
+          cashOut: 150,
+          currency: "USD",
+          startedAt: new Date("2026-09-15T10:00:00Z"),
+          endedAt: new Date("2026-09-15T12:00:00Z"),
+          convertedCurrency: "EUR",
+          convertedBuyIn: 85,
+          convertedCashOut: 127.5,
+          convertedProfit: 42.5,
+        },
+      ],
+      [],
+      "all",
+      "EUR",
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.currency).toBe("EUR");
+    expect(result[0]?.profit).toBe(42.5);
+    expect(result[0]?.bankroll).toBe(42.5);
+  });
 });

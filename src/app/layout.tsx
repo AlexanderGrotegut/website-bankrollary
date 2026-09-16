@@ -9,16 +9,16 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: {
-    default: "Bankrollary – Dein Bankroll Diary",
+    default: "Bankrollary – Your Bankroll Diary",
     template: "%s | Bankrollary",
   },
   description:
-    "Tracke deine Sessions, Bankroll, ROI und deinen Stundenlohn mit Bankrollary.",
+    "Track your sessions, bankroll, ROI and hourly rate with Bankrollary.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="de" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

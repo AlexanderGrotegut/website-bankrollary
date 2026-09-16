@@ -30,5 +30,5 @@ export async function enforceRateLimit(scope: string, values: string[]) {
     return true;
   });
 
-  if (!allowed) throw new Error("Zu viele Versuche. Bitte warte 15 Minuten.");
+  if (!allowed) throw new Error("Too many attempts. Please wait 15 minutes.");
 }

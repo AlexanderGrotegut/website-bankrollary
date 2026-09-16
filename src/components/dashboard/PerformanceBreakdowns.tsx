@@ -1,5 +1,5 @@
 import type { BreakdownRow } from "@/lib/breakdowns";
-import { formatMoney, GAME_TYPE_LABELS } from "@/lib/domain";
+import { formatMoney } from "@/lib/domain";
 
 export function PerformanceBreakdowns({
   types,
@@ -13,14 +13,11 @@ export function PerformanceBreakdowns({
   return (
     <div className="mt-6 grid gap-6 xl:grid-cols-2">
       <Breakdown
-        title="Nach Spieltyp"
-        rows={types.map((row) => ({
-          ...row,
-          label: GAME_TYPE_LABELS[row.label] ?? row.label,
-        }))}
+        title="By game type"
+        rows={types}
         currency={currency}
       />
-      <Breakdown title="Nach Plattform" rows={platforms} currency={currency} />
+      <Breakdown title="By platform" rows={platforms} currency={currency} />
     </div>
   );
 }
@@ -37,7 +34,7 @@ function Breakdown({
   const maximum = Math.max(...rows.map(({ profit }) => Math.abs(profit)), 1);
   return (
     <section className="panel">
-      <div className="panel-heading"><div><h2>{title}</h2><p>Performance im gewählten Zeitraum</p></div></div>
+      <div className="panel-heading"><div><h2>{title}</h2><p>Performance in the selected period</p></div></div>
       <div className="space-y-4">
         {rows.slice(0, 6).map((row) => (
           <div key={row.label}>
@@ -50,7 +47,7 @@ function Breakdown({
             </div>
           </div>
         ))}
-        {!rows.length && <p className="empty-row">Noch keine Daten in diesem Zeitraum.</p>}
+        {!rows.length && <p className="empty-row">No data in this period yet.</p>}
       </div>
     </section>
   );

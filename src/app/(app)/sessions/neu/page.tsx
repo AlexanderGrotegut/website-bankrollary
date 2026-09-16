@@ -5,10 +5,18 @@ import { prisma } from "@/lib/prisma";
 
 export default async function NewSessionPage() {
   const user = await requireUser();
-  const [platforms, settings] = await Promise.all([
+  const [platforms, gameCategories, settings] = await Promise.all([
     prisma.platform.findMany({
       where: { userId: user.id, archivedAt: null },
       orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.gameCategory.findMany({
+      where: {
+        archivedAt: null,
+        OR: [{ userId: null }, { userId: user.id }],
+      },
+      orderBy: [{ userId: "asc" }, { name: "asc" }],
       select: { id: true, name: true },
     }),
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -18,18 +26,18 @@ export default async function NewSessionPage() {
     <>
       <header className="page-header">
         <div>
-          <p className="eyebrow">Session erfassen</p>
-          <h1>Was hast du gespielt?</h1>
-          <p>P/L, ROI, Dauer und Stundenlohn werden automatisch berechnet.</p>
+          <p className="eyebrow">Track a session</p>
+          <h1>What did you play?</h1>
+          <p>P/L, ROI, duration and hourly rate are calculated automatically.</p>
         </div>
       </header>
       <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="panel">
-          <SessionForm platforms={platforms} defaultCurrency={settings.defaultCurrency} />
+          <SessionForm platforms={platforms} gameCategories={gameCategories} defaultCurrency={settings.defaultCurrency} />
         </section>
         <aside className="panel self-start">
-          <h2>Plattform fehlt?</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">Lege eigene Anbieter oder Spielorte an.</p>
+          <h2>Missing a platform?</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">Add your own provider or venue.</p>
           <div className="mt-5"><PlatformForm /></div>
         </aside>
       </div>

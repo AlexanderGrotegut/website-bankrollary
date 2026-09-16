@@ -6,14 +6,14 @@ import { buildAnalytics, periodStart, type Period } from "@/lib/analytics";
 import { requireUser } from "@/lib/auth";
 import { buildBreakdowns } from "@/lib/breakdowns";
 import { calculateSessionMetrics } from "@/lib/calculations";
-import { formatDuration, formatMoney, GAME_TYPE_LABELS } from "@/lib/domain";
+import { formatDuration, formatMoney } from "@/lib/domain";
 import { prisma } from "@/lib/prisma";
 
 const periods: { value: Period; label: string }[] = [
-  { value: "week", label: "Woche" },
-  { value: "month", label: "Monat" },
-  { value: "year", label: "Jahr" },
-  { value: "all", label: "Gesamt" },
+  { value: "week", label: "Week" },
+  { value: "month", label: "Month" },
+  { value: "year", label: "Year" },
+  { value: "all", label: "All time" },
 ];
 
 export default async function DashboardPage({
@@ -30,7 +30,10 @@ export default async function DashboardPage({
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
     prisma.session.findMany({
       where: { userId: user.id },
-      include: { platform: { select: { name: true } } },
+      include: {
+        platform: { select: { name: true } },
+        gameCategory: { select: { name: true } },
+      },
       orderBy: { startedAt: "desc" },
     }),
     prisma.bankrollTransaction.findMany({ where: { userId: user.id } }),
@@ -40,6 +43,13 @@ export default async function DashboardPage({
       ...session,
       buyIn: Number(session.buyIn),
       cashOut: session.cashOut === null ? null : Number(session.cashOut),
+      convertedCurrency: session.convertedCurrency,
+      convertedBuyIn:
+        session.convertedBuyIn === null ? null : Number(session.convertedBuyIn),
+      convertedCashOut:
+        session.convertedCashOut === null ? null : Number(session.convertedCashOut),
+      convertedProfit:
+        session.convertedProfit === null ? null : Number(session.convertedProfit),
     })),
     transactions.map((transaction) => ({
       ...transaction,
@@ -52,14 +62,24 @@ export default async function DashboardPage({
     analytics.find(({ currency }) => currency === query.currency) ??
     analytics.find(({ currency }) => currency === settings.defaultCurrency) ??
     analytics[0];
-  if (!selected) throw new Error("Analytics konnten nicht erstellt werden.");
+  if (!selected) throw new Error("Analytics could not be generated.");
   const breakdowns = buildBreakdowns(
     sessions
-      .filter((session) => session.currency === selected.currency)
+      .filter((session) =>
+        session.convertedProfit !== null && session.convertedCurrency
+          ? session.convertedCurrency === selected.currency
+          : session.currency === selected.currency,
+      )
       .map((session) => ({
         ...session,
-        buyIn: Number(session.buyIn),
-        cashOut: session.cashOut === null ? null : Number(session.cashOut),
+        buyIn:
+          session.convertedBuyIn === null
+            ? Number(session.buyIn)
+            : Number(session.convertedBuyIn),
+        cashOut:
+          session.convertedCashOut === null
+            ? session.cashOut === null ? null : Number(session.cashOut)
+            : Number(session.convertedCashOut),
       })),
     periodStart(period),
   );
@@ -68,12 +88,12 @@ export default async function DashboardPage({
     <>
       <header className="page-header">
         <div>
-          <p className="eyebrow">Performance Center</p>
-          <h1>Deine Bankroll im Überblick</h1>
-          <p>Ergebnisse verstehen, Trends erkennen und fokussiert bleiben.</p>
+          <p className="eyebrow">Performance center</p>
+          <h1>Your bankroll at a glance</h1>
+          <p>Understand results, spot trends and stay focused.</p>
         </div>
         <Link href="/sessions/neu" className="button-primary">
-          <Plus size={18} /> Neue Session
+          <Plus size={18} /> New session
         </Link>
       </header>
 
@@ -103,18 +123,18 @@ export default async function DashboardPage({
       </div>
 
       <section className="metric-grid mt-6">
-        <Metric icon={Wallet} label="Aktuelle Bankroll" value={formatMoney(selected.bankroll, selected.currency)} />
-        <Metric icon={TrendingUp} label="Gewinn / Verlust" value={formatMoney(selected.profit, selected.currency)} tone={selected.profit} />
+        <Metric icon={Wallet} label="Current bankroll" value={formatMoney(selected.bankroll, selected.currency)} />
+        <Metric icon={TrendingUp} label="Profit / loss" value={formatMoney(selected.profit, selected.currency)} tone={selected.profit} />
         <Metric icon={Percent} label="ROI" value={selected.roi === null ? "—" : `${selected.roi.toFixed(1)} %`} tone={selected.roi} />
-        <Metric icon={Clock3} label="Stundenlohn" value={selected.hourlyRate === null ? "—" : formatMoney(selected.hourlyRate, selected.currency)} tone={selected.hourlyRate} />
+        <Metric icon={Clock3} label="Hourly rate" value={selected.hourlyRate === null ? "—" : formatMoney(selected.hourlyRate, selected.currency)} tone={selected.hourlyRate} />
         <Metric icon={Activity} label="Sessions" value={String(selected.sessionCount)} detail={formatDuration(selected.durationMinutes)} />
       </section>
 
       <section className="panel mt-6">
         <div className="panel-heading">
           <div>
-            <h2>Bankroll-Entwicklung</h2>
-            <p>Kumuliertes Guthaben inklusive Bankroll-Buchungen</p>
+            <h2>Bankroll development</h2>
+            <p>Cumulative balance including bankroll transactions</p>
           </div>
           <span className="currency-chip active">{selected.currency}</span>
         </div>
@@ -124,12 +144,12 @@ export default async function DashboardPage({
 
       <section className="panel mt-6">
         <div className="panel-heading">
-          <div><h2>Letzte Sessions</h2><p>Deine jüngsten Aktivitäten</p></div>
-          <Link href="/sessions" className="text-link">Alle anzeigen</Link>
+          <div><h2>Recent sessions</h2><p>Your latest activity</p></div>
+          <Link href="/sessions" className="text-link">View all</Link>
         </div>
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Typ</th><th>Plattform</th><th>Datum</th><th>Dauer</th><th>P/L</th></tr></thead>
+            <thead><tr><th>Type</th><th>Platform</th><th>Date</th><th>Duration</th><th>P/L</th></tr></thead>
             <tbody>
               {sessions.slice(0, 5).map((session) => {
                 const metrics = calculateSessionMetrics({
@@ -139,15 +159,15 @@ export default async function DashboardPage({
                 });
                 return (
                   <tr key={session.id}>
-                    <td>{GAME_TYPE_LABELS[session.type]}</td>
+                    <td>{session.gameCategory.name}</td>
                     <td>{session.platform.name}</td>
-                    <td>{session.startedAt.toLocaleDateString("de-DE")}</td>
-                    <td>{metrics.durationMinutes === null ? "Läuft" : formatDuration(metrics.durationMinutes)}</td>
+                    <td>{session.startedAt.toLocaleDateString("en-GB")}</td>
+                    <td>{metrics.durationMinutes === null ? "Running" : formatDuration(metrics.durationMinutes)}</td>
                     <td className={toneClass(metrics.profit)}>{metrics.profit === null ? "—" : formatMoney(metrics.profit, session.currency)}</td>
                   </tr>
                 );
               })}
-              {!sessions.length && <tr><td colSpan={5} className="empty-row">Noch keine Sessions eingetragen.</td></tr>}
+              {!sessions.length && <tr><td colSpan={5} className="empty-row">No sessions recorded yet.</td></tr>}
             </tbody>
           </table>
         </div>

@@ -13,10 +13,10 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/actions/auth";
 
 const links = [
-  { href: "/dashboard", label: "Übersicht", icon: BarChart3 },
-  { href: "/sessions/neu", label: "Session eintragen", icon: PlusCircle },
+  { href: "/dashboard", label: "Overview", icon: BarChart3 },
+  { href: "/sessions/neu", label: "Track session", icon: PlusCircle },
   { href: "/sessions", label: "Sessions", icon: History },
-  { href: "/einstellungen", label: "Einstellungen", icon: Settings },
+  { href: "/einstellungen", label: "Settings", icon: Settings },
 ];
 
 export function AppNav({ email }: { email: string }) {
@@ -50,7 +50,7 @@ export function AppNav({ email }: { email: string }) {
         <form action={logoutAction}>
           <button className="nav-link w-full">
             <LogOut size={19} />
-            Abmelden
+            Sign out
           </button>
         </form>
       </div>
