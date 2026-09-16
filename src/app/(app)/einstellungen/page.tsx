@@ -73,7 +73,7 @@ export default async function SettingsPage() {
         </div>
       </section>
       <section className="panel mt-6">
-        <div className="panel-heading"><div><h2>Bankroll transaction</h2><p>Starting balance, deposits and withdrawals change your bankroll, but not your P/L.</p></div></div>
+        <div className="panel-heading"><div><h2>Bankroll transaction</h2><p>Deposits and withdrawals change your bankroll, but not your P/L. Withdrawals can take the balance below zero.</p></div></div>
         <TransactionForm defaultCurrency={settings.defaultCurrency} />
       </section>
       <section className="panel mt-6">

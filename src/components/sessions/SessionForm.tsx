@@ -66,15 +66,15 @@ export function SessionForm({
       <input type="hidden" name="isRunning" value={String(running)} />
       <input type="hidden" name="convertToDefaultCurrency" value={String(convert)} />
       <div className="form-grid">
-        <label className="field"><span>Game type</span><select name="gameCategoryId" defaultValue={session?.gameCategoryId} required><option value="">Select a game type</option>{gameCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <label className="field"><span>Platform</span><select name="platformId" defaultValue={session?.platformId} required><option value="">Select a platform</option>{platforms.map((platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
-        <label className="field"><span>Currency</span><select name="currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>{CURRENCIES.map((item) => <option key={item}>{item}</option>)}</select></label>
+        <label className="field"><span>Game type</span><select name="gameCategoryId" defaultValue={session?.gameCategoryId} required><option value="" disabled>Select a game type</option>{gameCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+        <label className="field"><span>Platform</span><select name="platformId" defaultValue={session?.platformId} required><option value="" disabled>Select a platform</option>{platforms.map((platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
+        <label className="field"><span>Currency <small className="field-note">Preferred currency: {defaultCurrency}</small></span><select name="currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>{CURRENCIES.map((item) => <option key={item}>{item}</option>)}</select></label>
+        <Toggle checked={convert} onChange={setConvert} title={`Convert to ${defaultCurrency}`} detail="Freeze the exchange rate when this session ends" />
         <label className="field"><span>Start</span><input name="startedAt" type="datetime-local" value={startedAt} onChange={(event) => setStartedAt(event.target.value)} required /></label>
+        {!running && <label className="field"><span>End</span><input name="endedAt" type="datetime-local" value={endedAt} onChange={(event) => setEndedAt(event.target.value)} required /></label>}
         <label className="field"><span>Buy-in</span><div className="input-affix"><input name="buyIn" type="number" min="0" step="0.01" value={buyIn} onChange={(event) => setBuyIn(event.target.valueAsNumber || 0)} required /><b>{currency}</b></div></label>
         {!running && <label className="field"><span>Cash-out</span><div className="input-affix"><input name="cashOut" type="number" min="0" step="0.01" value={cashOut} onChange={(event) => setCashOut(event.target.valueAsNumber || 0)} required /><b>{currency}</b></div></label>}
-        {!running && <label className="field"><span>End</span><input name="endedAt" type="datetime-local" value={endedAt} onChange={(event) => setEndedAt(event.target.value)} required /></label>}
         <Toggle checked={running} onChange={setRunning} title="Running session" detail="Add cash-out and end time later" />
-        <Toggle checked={convert} onChange={setConvert} title={`Convert to ${defaultCurrency}`} detail="Freeze the exchange rate when this session ends" />
       </div>
       {session?.exchangeRate && session.convertedCurrency && (
         <p className="form-success">

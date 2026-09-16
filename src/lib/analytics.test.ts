@@ -63,4 +63,24 @@ describe("buildAnalytics", () => {
     expect(result[0]?.profit).toBe(42.5);
     expect(result[0]?.bankroll).toBe(42.5);
   });
+
+  it("allows withdrawals to create a negative bankroll", () => {
+    const result = buildAnalytics(
+      [],
+      [
+        {
+          amount: 200,
+          currency: "EUR",
+          occurredAt: new Date("2026-09-16T10:00:00Z"),
+          type: "WITHDRAWAL",
+        },
+      ],
+      "all",
+      "EUR",
+    );
+
+    expect(result[0]?.bankroll).toBe(-200);
+    expect(result[0]?.profit).toBe(0);
+    expect(result[0]?.chart.at(-1)?.value).toBe(-200);
+  });
 });

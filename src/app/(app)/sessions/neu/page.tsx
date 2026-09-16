@@ -1,3 +1,4 @@
+import { GameCategoryForm } from "@/components/settings/GameCategoryForm";
 import { PlatformForm } from "@/components/settings/PlatformForm";
 import { SessionForm } from "@/components/sessions/SessionForm";
 import { requireUser } from "@/lib/auth";
@@ -39,6 +40,12 @@ export default async function NewSessionPage() {
           <h2>Missing a platform?</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">Add your own provider or venue.</p>
           <div className="mt-5"><PlatformForm /></div>
+          <div className="my-6 border-t border-[var(--border)]" />
+          <h2>Missing a game type?</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Create a private game type that only you can select.
+          </p>
+          <div className="mt-5"><GameCategoryForm /></div>
         </aside>
       </div>
     </>
