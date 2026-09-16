@@ -34,36 +34,29 @@ export async function createGameCategoryAction(
   if (existing?.userId === null) {
     return { error: "This built-in game type already exists." };
   }
-  if (existing?.archivedAt) {
-    await prisma.gameCategory.update({
-      where: { id: existing.id },
-      data: { archivedAt: null, name: parsed.data.name },
-    });
-  } else if (existing) {
+  if (existing) {
     return { error: "You already created this game type." };
-  } else {
-    await prisma.gameCategory.create({
-      data: {
-        userId: user.id,
-        name: parsed.data.name,
-        normalizedName,
-      },
-    });
   }
+  await prisma.gameCategory.create({
+    data: {
+      userId: user.id,
+      name: parsed.data.name,
+      normalizedName,
+    },
+  });
 
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");
   return { success: "Game type saved." };
 }
 
-export async function archiveGameCategoryAction(formData: FormData) {
+export async function deleteGameCategoryAction(formData: FormData) {
   const user = await requireUser();
   const id = z.string().cuid().safeParse(formData.get("id"));
   if (!id.success) return;
 
-  await prisma.gameCategory.updateMany({
+  await prisma.gameCategory.deleteMany({
     where: { id: id.data, userId: user.id },
-    data: { archivedAt: new Date() },
   });
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");

@@ -49,8 +49,8 @@ export default async function EditSessionPage({
           defaultCurrency={settings.defaultCurrency}
           session={{
             id: session.id,
-            gameCategoryId: session.gameCategoryId,
-            platformId: session.platformId,
+            gameCategoryId: session.gameCategoryId ?? "",
+            platformId: session.platformId ?? "",
             currency: session.currency,
             startedAt: dateTimeValue(session.startedAt),
             endedAt: dateTimeValue(session.endedAt),

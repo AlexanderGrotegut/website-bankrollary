@@ -27,13 +27,9 @@ export default async function SessionsPage({
 }) {
   const user = await requireUser();
   const query = await searchParams;
-  const [sessions, platforms, gameCategories] = await Promise.all([
+  const [sessions, gameCategories, platforms] = await Promise.all([
     prisma.session.findMany({
       where: { userId: user.id },
-      include: {
-        platform: { select: { name: true } },
-        gameCategory: { select: { name: true } },
-      },
       orderBy: { startedAt: "desc" },
     }),
     prisma.gameCategory.findMany({
@@ -50,9 +46,9 @@ export default async function SessionsPage({
       select: { id: true, name: true },
     }),
   ]);
-  const search = query.search?.trim().toLocaleLowerCase("de") ?? "";
+  const search = query.search?.trim().toLocaleLowerCase("en") ?? "";
   const filtered = sessions.filter((session) => {
-    const haystack = `${session.platform.name} ${session.notes ?? ""}`.toLocaleLowerCase("de");
+    const haystack = `${session.platformName} ${session.notes ?? ""}`.toLocaleLowerCase("en");
     if (search && !haystack.includes(search)) return false;
     if (query.category && session.gameCategoryId !== query.category) return false;
     if (query.currency && session.currency !== query.currency) return false;
@@ -98,7 +94,7 @@ export default async function SessionsPage({
                 const tone = metrics.profit === null || metrics.profit === 0 ? "" : metrics.profit > 0 ? "positive" : "negative";
                 return (
                   <tr key={session.id}>
-                    <td><strong>{session.gameCategory.name}</strong><small>{session.platform.name}</small></td>
+                    <td><strong>{session.gameCategoryName}</strong><small>{session.platformName}</small></td>
                     <td>{session.startedAt.toLocaleDateString("en-GB")}<small>{metrics.durationMinutes === null ? <span className="status-live">Running</span> : formatDuration(metrics.durationMinutes)}</small></td>
                     <td>{formatMoney(Number(session.buyIn), session.currency)}<small>{session.cashOut === null ? "Cash-out pending" : formatMoney(Number(session.cashOut), session.currency)}</small></td>
                     <td className={tone}>{metrics.profit === null ? "—" : formatMoney(metrics.profit, session.currency)}{session.convertedProfit !== null && session.convertedCurrency && <small>Locked: {formatMoney(Number(session.convertedProfit), session.convertedCurrency)}</small>}</td>

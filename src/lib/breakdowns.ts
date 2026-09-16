@@ -5,8 +5,8 @@ type BreakdownSession = {
   cashOut: number | null;
   startedAt: Date;
   endedAt: Date | null;
-  gameCategory: { name: string };
-  platform: { name: string };
+  gameCategoryName: string;
+  platformName: string;
 };
 
 export type BreakdownRow = {
@@ -23,8 +23,8 @@ export function buildBreakdowns(
     (session) => session.endedAt && session.endedAt >= start,
   );
   return {
-    types: group(completed, (session) => session.gameCategory.name),
-    platforms: group(completed, (session) => session.platform.name),
+    types: group(completed, (session) => session.gameCategoryName),
+    platforms: group(completed, (session) => session.platformName),
   };
 }
 

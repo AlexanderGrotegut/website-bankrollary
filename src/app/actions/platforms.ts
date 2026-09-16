@@ -23,32 +23,25 @@ export async function createPlatformAction(
       name: { equals: parsed.data.name, mode: "insensitive" },
     },
   });
-  if (existing?.archivedAt) {
-    await prisma.platform.update({
-      where: { id: existing.id },
-      data: { archivedAt: null },
-    });
-  } else if (existing) {
+  if (existing) {
     return { error: "This platform already exists." };
-  } else {
-    await prisma.platform.create({
-      data: { userId: user.id, name: parsed.data.name },
-    });
   }
+  await prisma.platform.create({
+    data: { userId: user.id, name: parsed.data.name },
+  });
 
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");
   return { success: "Platform saved." };
 }
 
-export async function archivePlatformAction(formData: FormData) {
+export async function deletePlatformAction(formData: FormData) {
   const user = await requireUser();
   const id = z.string().cuid().safeParse(formData.get("id"));
   if (!id.success) return;
 
-  await prisma.platform.updateMany({
+  await prisma.platform.deleteMany({
     where: { id: id.data, userId: user.id },
-    data: { archivedAt: new Date() },
   });
   revalidatePath("/sessions");
   revalidatePath("/einstellungen");

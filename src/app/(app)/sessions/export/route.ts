@@ -15,10 +15,6 @@ export async function GET() {
 
   const sessions = await prisma.session.findMany({
     where: { userId: user.id },
-    include: {
-      platform: { select: { name: true } },
-      gameCategory: { select: { name: true } },
-    },
     orderBy: { startedAt: "desc" },
   });
   const header = [
@@ -33,8 +29,8 @@ export async function GET() {
       cashOut: session.cashOut === null ? null : Number(session.cashOut),
     });
     return [
-      session.gameCategory.name,
-      session.platform.name,
+      session.gameCategoryName,
+      session.platformName,
       session.currency,
       session.startedAt.toISOString(),
       session.endedAt?.toISOString() ?? null,

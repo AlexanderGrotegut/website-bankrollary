@@ -41,6 +41,8 @@ export default async function DashboardPage({
       where: { userId: user.id },
       select: {
         id: true,
+        gameCategoryName: true,
+        platformName: true,
         currency: true,
         startedAt: true,
         endedAt: true,
@@ -50,8 +52,6 @@ export default async function DashboardPage({
         convertedBuyIn: true,
         convertedCashOut: true,
         convertedProfit: true,
-        platform: { select: { name: true } },
-        gameCategory: { select: { name: true } },
       },
       orderBy: { startedAt: "desc" },
     }),
@@ -113,16 +113,35 @@ export default async function DashboardPage({
     periodStart(period),
   );
   const recentActivity = [
-    ...sessions.map((session) => ({
-      kind: "session" as const,
-      date: session.endedAt ?? session.startedAt,
-      session,
-    })),
-    ...transactions.map((transaction) => ({
-      kind: "transaction" as const,
-      date: transaction.occurredAt,
-      transaction,
-    })),
+    ...sessions.flatMap((session) => {
+      const usesSnapshot =
+        session.convertedProfit !== null && session.convertedCurrency !== null;
+      const currency = usesSnapshot
+        ? session.convertedCurrency
+        : session.currency;
+      if (currency !== selected.currency) return [];
+      const originalMetrics = calculateSessionMetrics({
+        ...session,
+        buyIn: Number(session.buyIn),
+        cashOut: session.cashOut === null ? null : Number(session.cashOut),
+      });
+      return [{
+        kind: "session" as const,
+        date: session.endedAt ?? session.startedAt,
+        session,
+        amount: usesSnapshot
+          ? Number(session.convertedProfit)
+          : originalMetrics.profit,
+        currency,
+      }];
+    }),
+    ...transactions
+      .filter((transaction) => transaction.currency === selected.currency)
+      .map((transaction) => ({
+        kind: "transaction" as const,
+        date: transaction.occurredAt,
+        transaction,
+      })),
   ]
     .sort((first, second) => second.date.getTime() - first.date.getTime())
     .slice(0, 6);
@@ -189,7 +208,7 @@ export default async function DashboardPage({
 
       <section className="panel mt-6">
         <div className="panel-heading">
-          <div><h2>Recent activity</h2><p>Sessions, deposits and withdrawals</p></div>
+          <div><h2>Recent activity</h2><p>Sessions, deposits and withdrawals in {selected.currency}</p></div>
           <Link href="/sessions" className="text-link" prefetch={false}>View all</Link>
         </div>
         <div className="table-wrap">
@@ -221,11 +240,11 @@ export default async function DashboardPage({
                 });
                 return (
                   <tr key={session.id}>
-                    <td>{session.gameCategory.name}</td>
-                    <td>{session.platform.name}</td>
+                    <td>{session.gameCategoryName}</td>
+                    <td>{session.platformName}</td>
                     <td>{session.startedAt.toLocaleDateString("en-GB")}</td>
                     <td>{metrics.durationMinutes === null ? "Running" : formatDuration(metrics.durationMinutes)}</td>
-                    <td className={toneClass(metrics.profit)}>{metrics.profit === null ? "—" : formatMoney(metrics.profit, session.currency)}</td>
+                    <td className={toneClass(activity.amount)}>{activity.amount === null ? "—" : formatMoney(activity.amount, activity.currency)}</td>
                   </tr>
                 );
               })}

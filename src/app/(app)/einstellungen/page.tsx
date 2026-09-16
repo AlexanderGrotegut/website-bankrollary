@@ -1,9 +1,15 @@
-import { Archive, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import {
   deleteTransactionAction,
 } from "@/app/actions/bankroll";
-import { archiveGameCategoryAction } from "@/app/actions/gameCategories";
-import { archivePlatformAction } from "@/app/actions/platforms";
+import {
+  DeleteGameCategoryButton,
+  DeletePlatformButton,
+} from "@/components/settings/DeleteSourceButton";
+import {
+  EmailForm,
+  PasswordForm,
+} from "@/components/settings/AccountForms";
 import { GameCategoryForm } from "@/components/settings/GameCategoryForm";
 import { PlatformForm } from "@/components/settings/PlatformForm";
 import {
@@ -56,7 +62,7 @@ export default async function SettingsPage() {
           <PlatformForm compact />
           <div className="settings-list mt-5">
             {platforms.map((platform) => (
-              <div key={platform.id}><span><strong>{platform.name}</strong><small>{platform._count.sessions} sessions</small></span><form action={archivePlatformAction}><input type="hidden" name="id" value={platform.id} /><button title="Archive"><Archive size={16} /></button></form></div>
+              <div key={platform.id}><span><strong>{platform.name}</strong><small>{platform._count.sessions} sessions</small></span><DeletePlatformButton id={platform.id} /></div>
             ))}
             {!platforms.length && <p className="empty-row">No platform created yet.</p>}
           </div>
@@ -67,11 +73,21 @@ export default async function SettingsPage() {
         <GameCategoryForm />
         <div className="settings-list mt-5">
           {customCategories.map((category) => (
-            <div key={category.id}><span><strong>{category.name}</strong><small>{category._count.sessions} sessions</small></span><form action={archiveGameCategoryAction}><input type="hidden" name="id" value={category.id} /><button title="Archive"><Archive size={16} /></button></form></div>
+            <div key={category.id}><span><strong>{category.name}</strong><small>{category._count.sessions} sessions</small></span><DeleteGameCategoryButton id={category.id} /></div>
           ))}
           {!customCategories.length && <p className="empty-row">No custom game types yet.</p>}
         </div>
       </section>
+      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <section className="panel">
+          <div className="panel-heading"><div><h2>Email address</h2><p>Change the address you use to sign in</p></div></div>
+          <EmailForm currentEmail={user.email ?? ""} />
+        </section>
+        <section className="panel">
+          <div className="panel-heading"><div><h2>Password</h2><p>Use at least eight characters</p></div></div>
+          <PasswordForm />
+        </section>
+      </div>
       <section className="panel mt-6">
         <div className="panel-heading"><div><h2>Bankroll transaction</h2><p>Deposits and withdrawals change your bankroll, but not your P/L. Withdrawals can take the balance below zero.</p></div></div>
         <TransactionForm defaultCurrency={settings.defaultCurrency} />

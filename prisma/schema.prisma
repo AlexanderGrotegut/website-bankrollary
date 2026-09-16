@@ -57,10 +57,12 @@ model GameCategory {
 model Session {
   id                       String       @id @default(cuid())
   userId                   String
-  gameCategoryId           String
-  gameCategory             GameCategory @relation(fields: [gameCategoryId], references: [id])
-  platformId               String
-  platform                 Platform     @relation(fields: [platformId], references: [id])
+  gameCategoryId           String?
+  gameCategoryName         String
+  gameCategory             GameCategory? @relation(fields: [gameCategoryId], references: [id], onDelete: SetNull)
+  platformId               String?
+  platformName             String
+  platform                 Platform?     @relation(fields: [platformId], references: [id], onDelete: SetNull)
   currency                 String       @db.Char(3)
   startedAt                DateTime
   endedAt                  DateTime?

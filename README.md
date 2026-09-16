@@ -10,6 +10,7 @@ bankroll transactions and analytics are private to each account.
 - Running sessions that can be completed later
 - Weekly, monthly, yearly and all-time analytics
 - User-defined platforms and game types
+- Deleting a platform or custom game type keeps historical session snapshots
 - Multiple currencies kept separate by default
 - Optional immutable EUR/foreign-currency snapshots using Frankfurter/ECB
 - Starting balances, deposits and withdrawals

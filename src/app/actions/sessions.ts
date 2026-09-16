@@ -27,7 +27,7 @@ export async function saveSessionAction(
   const [platform, settings, existing] = await Promise.all([
     prisma.platform.findFirst({
       where: { id: parsed.data.platformId, userId: user.id, archivedAt: null },
-      select: { id: true },
+      select: { id: true, name: true },
     }),
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
     parsed.data.id
@@ -47,7 +47,7 @@ export async function saveSessionAction(
         ? {}
         : { archivedAt: null }),
     },
-    select: { id: true },
+    select: { id: true, name: true },
   });
   if (!gameCategory) return { error: "Game type not found." };
 
@@ -82,7 +82,9 @@ export async function saveSessionAction(
 
   const data = {
     gameCategoryId: gameCategory.id,
+    gameCategoryName: gameCategory.name,
     platformId: platform.id,
+    platformName: platform.name,
     currency: parsed.data.currency,
     startedAt: parsed.data.startedAt,
     endedAt,
