@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum GameType {
+  POKER
+  SPORTS_BETTING
+  CASINO
+  BLACKJACK
+  ROULETTE
+  SLOTS
+}
+
+enum TransactionType {
+  STARTING_BALANCE
+  DEPOSIT
+  WITHDRAWAL
+}
+
+model RateLimitEntry {
+  key         String   @id
+  count       Int      @default(1)
+  windowStart DateTime @default(now())
+}
+
+model UserSettings {
+  userId          String   @id
+  defaultCurrency String   @default("EUR") @db.Char(3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Platform {
+  id         String    @id @default(cuid())
+  userId     String
+  name       String
+  archivedAt DateTime?
+  sessions   Session[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId, archivedAt])
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  type      GameType
+  platformId String
+  platform  Platform  @relation(fields: [platformId], references: [id])
+  currency  String    @db.Char(3)
+  startedAt DateTime
+  endedAt   DateTime?
+  buyIn     Decimal   @db.Decimal(14, 2)
+  cashOut   Decimal?  @db.Decimal(14, 2)
+  notes     String?   @db.VarChar(500)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, startedAt])
+  @@index([userId, currency])
+  @@index([platformId])
+}
+
+model BankrollTransaction {
+  id        String          @id @default(cuid())
+  userId    String
+  type      TransactionType
+  amount    Decimal         @db.Decimal(14, 2)
+  currency  String          @db.Char(3)
+  note      String?         @db.VarChar(200)
+  occurredAt DateTime       @default(now())
+  createdAt DateTime        @default(now())
+
+  @@index([userId, occurredAt])
+  @@index([userId, currency])
+}
