@@ -27,8 +27,8 @@ async function limit(scope: string, email: string) {
   try {
     await enforceRateLimit(scope, [await clientIp(), email]);
     return null;
-  } catch (error) {
-    return error instanceof Error ? error.message : "Too many attempts.";
+  } catch {
+    return "Login is temporarily unavailable. Please try again shortly.";
   }
 }
 
