@@ -43,6 +43,12 @@ export function SessionForm({
   session,
 }: Props) {
   const [state, action, pending] = useActionState(saveSessionAction, {});
+  const [gameCategoryId, setGameCategoryId] = useState(
+    session?.gameCategoryId ?? defaultGameCategoryId ?? "",
+  );
+  const [platformId, setPlatformId] = useState(
+    session?.platformId ?? defaultPlatformId ?? "",
+  );
   const [running, setRunning] = useState(session ? !session.endedAt : false);
   const [convert, setConvert] = useState(session?.convertToDefaultCurrency ?? false);
   const [buyIn, setBuyIn] = useState<number | "">(session?.buyIn ?? "");
@@ -70,8 +76,8 @@ export function SessionForm({
       <input type="hidden" name="isRunning" value={String(running)} />
       <input type="hidden" name="convertToDefaultCurrency" value={String(convert)} />
       <div className="form-grid">
-        <label className="field"><span>Game type</span><select name="gameCategoryId" defaultValue={session?.gameCategoryId ?? defaultGameCategoryId ?? ""} required><option value="" disabled>Select a game type</option>{gameCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <label className="field"><span>Platform</span><select name="platformId" defaultValue={session?.platformId ?? defaultPlatformId ?? ""} required><option value="" disabled>Select a platform</option>{platforms.map((platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
+        <label className="field"><span>Game type</span><select name="gameCategoryId" value={gameCategoryId} onChange={(event) => setGameCategoryId(event.target.value)} required><option value="" disabled>Select a game type</option>{gameCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+        <label className="field"><span>Platform</span><select name="platformId" value={platformId} onChange={(event) => setPlatformId(event.target.value)} required><option value="" disabled>Select a platform</option>{platforms.map((platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
         <label className="field"><span>Currency <small className="field-note">Preferred currency: {defaultCurrency}</small></span><select name="currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>{CURRENCIES.map((item) => <option key={item}>{item}</option>)}</select></label>
         <Toggle checked={convert} onChange={setConvert} title={`Convert to ${defaultCurrency}`} detail="Freeze the exchange rate when this session ends" />
         <label className="field"><span>Start</span><input name="startedAt" type="datetime-local" value={startedAt} onChange={(event) => setStartedAt(event.target.value)} required /></label>
