@@ -1,5 +1,8 @@
 import { AppNav } from "@/components/AppNav";
 import { requireUser } from "@/lib/auth";
+import { noIndexMetadata } from "@/lib/noIndexMetadata";
+
+export const metadata = noIndexMetadata;
 
 export default async function ProtectedLayout({
   children,

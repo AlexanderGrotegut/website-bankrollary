@@ -47,6 +47,12 @@
 .shot-list span:not(.shot-icon) { display: flex; flex-direction: column; gap: .25rem; }
 .shot-icon { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: .55rem; color: var(--accent); background: var(--accent-soft); }
 .shot-list time { display: flex; align-items: center; gap: .25rem; color: var(--muted); font-size: .62rem; }
+.seo-section { padding-top: 2rem; }
+.seo-section .section-intro { margin-bottom: 3rem; }
+.seo-grid { display: grid; gap: 1rem; }
+.seo-grid article { padding: 1.5rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.seo-grid h3 { font-size: 1.15rem; font-weight: 650; letter-spacing: -.025em; }
+.seo-grid p { margin-top: .75rem; color: var(--muted); font-size: .9rem; line-height: 1.7; }
 .landing-cta { display: flex; margin: 2rem 1.25rem 5rem; align-items: center; flex-direction: column; padding: 5rem 1.5rem; border-radius: 1.5rem; color: white; text-align: center; background: radial-gradient(circle at 25% 0%, #1d5e50, transparent 35%), #0b2420; }
 .landing-cta > svg { color: #60dab9; }
 .landing-cta p { margin: 1rem 0 2rem; color: #ffffffa8; }
@@ -57,5 +63,6 @@
   .guide-step { grid-template-columns: .75fr 1.25fr; gap: 6rem; }
   .guide-step.reverse { grid-template-columns: 1.25fr .75fr; }
   .guide-step.reverse .step-copy { order: 2; }
+  .seo-grid { grid-template-columns: repeat(3, 1fr); }
   .landing-cta { margin-inline: auto; max-width: 1140px; }
 }

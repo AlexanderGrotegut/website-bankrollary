@@ -1,12 +1,42 @@
 import { ArrowRight, BarChart3, Check, Clock3, LineChart, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "Bankrollary - Your Bankroll Diary",
+      alternateName: "Bankrollary",
+      url: "https://www.bankrollary.com",
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Bankrollary",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      description:
+        "Free bankroll tracker and poker bankroll tracker for sessions, profit, ROI, hourly rate and bankroll management.",
+      url: "https://www.bankrollary.com",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+      },
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <div className="landing">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <nav className="landing-nav">
         <Link href="/" className="brand"><span className="brand-mark">B</span>Bankrollary</Link>
-        <div className="flex items-center gap-3"><Link href="/login" className="button-ghost">Sign in</Link><Link href="/registrieren" className="button-primary">Start for free</Link></div>
+        <div className="flex items-center gap-3"><Link href="/login" className="button-ghost">Sign in</Link><Link href="/registrieren" className="button-primary">Start free</Link></div>
       </nav>
       <main>
         <section className="landing-hero">
@@ -14,13 +44,13 @@ export default function Home() {
           <div className="relative mx-auto max-w-5xl text-center">
             <p className="landing-badge"><Sparkles size={15} /> Smarter Bankroll Tracker</p>
             <h1>Bankrollary - Your Bankroll Diary</h1>
-            <p className="hero-copy">Watch your Bankroll grow!</p>
+            <p className="hero-copy">A free bankroll tracker for poker, sports betting and casino sessions. Track profit, ROI, playing time and your complete bankroll development.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link href="/registrieren" className="button-primary button-large">Start your diary <ArrowRight size={18} /></Link>
+              <Link href="/registrieren" className="button-primary button-large">Start your free diary <ArrowRight size={18} /></Link>
               <a href="#so-gehts" className="button-secondary button-large">How it works</a>
             </div>
             <div className="mt-7 flex flex-wrap justify-center gap-6 text-sm text-[var(--muted)]">
-              <span><Check size={15} /> Start for free</span><span><Check size={15} /> Multiple currencies</span><span><ShieldCheck size={15} /> Private data</span>
+              <span><Check size={15} /> Free bankroll tracking</span><span><Check size={15} /> No hidden costs</span><span><Check size={15} /> Multiple currencies</span><span><ShieldCheck size={15} /> Private data</span>
             </div>
           </div>
           <div className="hero-preview"><DashboardPreview /></div>
@@ -31,6 +61,28 @@ export default function Home() {
           <Guide number="01" title="Track a session in seconds" text="Choose a game type and platform, then add your buy-in and cash-out. The start time is ready for you." bullets={["Create your own platforms", "Complete running sessions later", "Automatic P/L, ROI and hourly rate"]}><SessionPreview /></Guide>
           <Guide number="02" title="Understand your development" text="Your dashboard turns individual sessions into a clear trend, separated by currency." bullets={["Weekly, monthly and yearly views", "Bankroll graph and key metrics", "Deposits and withdrawals kept separate"]} reverse><AnalyticsPreview /></Guide>
           <Guide number="03" title="Filter your history and learn" text="Find sessions by type, platform, date or currency and export your data as CSV." bullets={["Edit every session", "Compare platforms", "Your data stays yours"]}><HistoryPreview /></Guide>
+        </section>
+
+        <section className="landing-section seo-section">
+          <div className="section-intro">
+            <p className="eyebrow">One tracker, every session</p>
+            <h2>Bankroll management without spreadsheets</h2>
+            <p>Bankrollary combines a poker bankroll tracker, betting tracker and casino session tracker in one private diary. Record every result and understand how your bankroll changes over time.</p>
+          </div>
+          <div className="seo-grid">
+            <article>
+              <h3>Poker bankroll tracker</h3>
+              <p>Track cash games and tournaments with buy-in, cash-out, profit, ROI, duration and hourly rate. Compare poker rooms and review your complete session history.</p>
+            </article>
+            <article>
+              <h3>Betting and casino tracker</h3>
+              <p>Monitor sports betting, blackjack, roulette and slots results by platform and currency while keeping deposits and withdrawals separate from profit.</p>
+            </article>
+            <article>
+              <h3>Bankroll analytics</h3>
+              <p>Use weekly, monthly, yearly and all-time views to analyze bankroll development, game performance and results across multiple currencies.</p>
+            </article>
+          </div>
         </section>
 
         <section className="landing-cta">
