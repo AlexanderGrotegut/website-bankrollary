@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { buildSessionSnapshot } from "@/lib/exchangeRates";
@@ -136,7 +137,7 @@ export async function saveSessionAction(
   }
 
   refreshSessionPages();
-  return { success: existing ? "Session updated." : "Session saved." };
+  redirect("/sessions");
 }
 
 export async function finishSessionAction(
@@ -189,7 +190,7 @@ export async function finishSessionAction(
     data: { startedAt, endedAt, cashOut: parsed.data.cashOut, ...snapshot },
   });
   refreshSessionPages();
-  return { success: "Session completed." };
+  redirect("/sessions");
 }
 
 export async function deleteSessionAction(formData: FormData) {

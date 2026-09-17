@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Bankrollary",
   },
   description:
-    "Free bankroll tracker and poker bankroll tracker for sessions, profit, ROI, hourly rate and bankroll management.",
+    "Free Bankroll Tracker to watch your Bankroll grow!",
   alternates: {
     canonical: "/",
   },
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "Bankrollary",
     title: "Bankrollary - Your Bankroll Diary",
     description:
-      "Free bankroll tracker for poker, betting and casino sessions, profit, ROI and hourly rate.",
+      "Free Bankroll Tracker to watch your Bankroll grow!",
     images: [
       {
         url: "/opengraph-image",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Bankrollary - Your Bankroll Diary",
     description:
-      "Free bankroll tracker for poker, betting and casino sessions, profit, ROI and hourly rate.",
+      "Free Bankroll Tracker to watch your Bankroll grow!",
     images: ["/opengraph-image"],
   },
 };
