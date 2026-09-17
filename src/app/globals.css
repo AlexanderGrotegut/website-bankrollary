@@ -58,6 +58,9 @@ button:disabled { cursor: wait; opacity: .6; }
 .input-affix { position: relative; }
 .input-affix input { padding-right: 3.5rem; }
 .input-affix b { position: absolute; right: .8rem; top: .85rem; color: var(--muted); font-size: .75rem; }
+.session-amount-input { appearance: textfield; }
+.session-amount-input::-webkit-inner-spin-button,
+.session-amount-input::-webkit-outer-spin-button { margin: 0; appearance: none; }
 .small-input { width: 7rem; height: 2.2rem; padding: 0 .55rem; font-size: .8rem; }
 .form-error, .form-success { border-radius: .6rem; padding: .65rem .8rem; font-size: .8rem; }
 .form-error { color: #a82c36; background: #fff0f1; }

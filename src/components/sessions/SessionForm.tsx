@@ -82,8 +82,8 @@ export function SessionForm({
         <Toggle checked={convert} onChange={setConvert} title={`Convert to ${defaultCurrency}`} detail="Freeze the exchange rate when this session ends" />
         <label className="field"><span>Start</span><input name="startedAt" type="datetime-local" value={startedAt} onChange={(event) => setStartedAt(event.target.value)} required /></label>
         {!running && <label className="field"><span>End</span><input name="endedAt" type="datetime-local" value={endedAt} onChange={(event) => setEndedAt(event.target.value)} required /></label>}
-        <label className="field"><span>Buy-in</span><div className="input-affix"><input name="buyIn" type="number" min="0" step="0.01" placeholder="0" value={buyIn} onChange={(event) => setBuyIn(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>
-        {!running && <label className="field"><span>Cash-out</span><div className="input-affix"><input name="cashOut" type="number" min="0" step="0.01" placeholder="0" value={cashOut} onChange={(event) => setCashOut(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>}
+        <label className="field"><span>Buy-in</span><div className="input-affix"><input className="session-amount-input" name="buyIn" type="number" min="0" step="0.01" placeholder="0" value={buyIn} onChange={(event) => setBuyIn(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>
+        {!running && <label className="field"><span>Cash-out</span><div className="input-affix"><input className="session-amount-input" name="cashOut" type="number" min="0" step="0.01" placeholder="0" value={cashOut} onChange={(event) => setCashOut(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>}
         <Toggle checked={running} onChange={setRunning} title="Running session" detail="Add cash-out and end time later" />
       </div>
       {session?.exchangeRate && session.convertedCurrency && (
