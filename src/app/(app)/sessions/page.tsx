@@ -53,16 +53,22 @@ export default async function SessionsPage({
     }),
   ]);
   const search = query.search?.trim().toLocaleLowerCase("en") ?? "";
-  const filtered = sessions.filter((session) => {
-    const haystack = `${session.platformName} ${session.notes ?? ""}`.toLocaleLowerCase("en");
-    if (search && !haystack.includes(search)) return false;
-    if (query.category && session.gameCategoryId !== query.category) return false;
-    if (query.currency && session.currency !== query.currency) return false;
-    if (query.platform && session.platformId !== query.platform) return false;
-    if (query.from && session.startedAt < new Date(`${query.from}T00:00:00`)) return false;
-    if (query.to && session.startedAt > new Date(`${query.to}T23:59:59`)) return false;
-    return true;
-  });
+  const filtered = sessions
+    .filter((session) => {
+      const haystack = `${session.platformName} ${session.notes ?? ""}`.toLocaleLowerCase("en");
+      if (search && !haystack.includes(search)) return false;
+      if (query.category && session.gameCategoryId !== query.category) return false;
+      if (query.currency && session.currency !== query.currency) return false;
+      if (query.platform && session.platformId !== query.platform) return false;
+      if (query.from && session.startedAt < new Date(`${query.from}T00:00:00`)) return false;
+      if (query.to && session.startedAt > new Date(`${query.to}T23:59:59`)) return false;
+      return true;
+    })
+    .sort((first, second) => {
+      if (first.endedAt === null && second.endedAt !== null) return -1;
+      if (first.endedAt !== null && second.endedAt === null) return 1;
+      return second.startedAt.getTime() - first.startedAt.getTime();
+    });
 
   return (
     <>
