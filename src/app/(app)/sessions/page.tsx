@@ -67,7 +67,10 @@ export default async function SessionsPage({
     .sort((first, second) => {
       if (first.endedAt === null && second.endedAt !== null) return -1;
       if (first.endedAt !== null && second.endedAt === null) return 1;
-      return second.startedAt.getTime() - first.startedAt.getTime();
+      if (first.endedAt === null && second.endedAt === null) {
+        return second.startedAt.getTime() - first.startedAt.getTime();
+      }
+      return second.endedAt!.getTime() - first.endedAt!.getTime();
     });
 
   return (
