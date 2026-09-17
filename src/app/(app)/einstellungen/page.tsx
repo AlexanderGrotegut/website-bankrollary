@@ -1,5 +1,4 @@
 import { MessageSquarePlus, Trash2 } from "lucide-react";
-import Link from "next/link";
 import {
   deleteTransactionAction,
 } from "@/app/actions/bankroll";
@@ -13,6 +12,7 @@ import {
   EmailForm,
   PasswordForm,
 } from "@/components/settings/AccountForms";
+import { FeedbackForm } from "@/components/settings/FeedbackForm";
 import { GameCategoryForm } from "@/components/settings/GameCategoryForm";
 import { PlatformForm } from "@/components/settings/PlatformForm";
 import {
@@ -138,12 +138,9 @@ export default async function SettingsPage() {
       </section>
       <section className="panel mt-6">
         <div className="panel-heading">
-          <div><h2><MessageSquarePlus size={18} className="mr-2 inline-block align-text-bottom" />Feedback &amp; Ideas</h2><p>Help us improve Bankrollary</p></div>
+          <div><h2><MessageSquarePlus size={18} className="mr-2 inline-block align-text-bottom" />Feedback &amp; Ideas</h2><p>Help us improve Bankrollary — your message goes directly to the team</p></div>
         </div>
-        <p className="text-sm text-[var(--muted)]">Got a feature request, found a bug, or just want to share your thoughts?</p>
-        <Link href="/einstellungen/feedback" className="button-secondary mt-4 inline-flex items-center gap-2" prefetch={false}>
-          <MessageSquarePlus size={17} /> Send feedback
-        </Link>
+        <FeedbackForm />
       </section>
     </>
   );
