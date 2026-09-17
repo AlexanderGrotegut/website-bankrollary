@@ -2,10 +2,10 @@ import { Download, Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { deleteSessionAction } from "@/app/actions/sessions";
 import { FinishSessionForm } from "@/components/sessions/FinishSessionForm";
+import { SessionFilters } from "@/components/sessions/SessionFilters";
 import { requireUser } from "@/lib/auth";
 import { calculateSessionMetrics } from "@/lib/calculations";
 import {
-  CURRENCIES,
   formatDuration,
   formatMoney,
 } from "@/lib/domain";
@@ -80,16 +80,11 @@ export default async function SessionsPage({
         </div>
       </header>
 
-      <form className="panel filter-grid mt-8">
-        <label className="field"><span>Search</span><input name="search" defaultValue={query.search} placeholder="Platform or notes" /></label>
-        <label className="field"><span>Game type</span><select name="category" defaultValue={query.category}><option value="">All</option>{gameCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <label className="field"><span>Platform</span><select name="platform" defaultValue={query.platform}><option value="">All</option>{platforms.map((platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
-        <label className="field"><span>Currency</span><select name="currency" defaultValue={query.currency}><option value="">All</option>{CURRENCIES.map((currency) => <option key={currency}>{currency}</option>)}</select></label>
-        <label className="field"><span>From</span><input name="from" type="date" defaultValue={query.from} /></label>
-        <label className="field"><span>To</span><input name="to" type="date" defaultValue={query.to} /></label>
-        <button className="button-secondary self-end">Apply filters</button>
-        <Link href="/sessions" className="text-link self-center" prefetch={false}>Reset</Link>
-      </form>
+      <SessionFilters
+        query={query}
+        gameCategories={gameCategories}
+        platforms={platforms}
+      />
 
       <section className="panel mt-6">
         <div className="panel-heading"><div><h2>{filtered.length} sessions</h2><p>Completed and running sessions</p></div></div>
