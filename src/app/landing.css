@@ -53,6 +53,33 @@
 .seo-grid article { padding: 1.5rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
 .seo-grid h3 { font-size: 1.15rem; font-weight: 650; letter-spacing: -.025em; }
 .seo-grid p { margin-top: .75rem; color: var(--muted); font-size: .9rem; line-height: 1.7; }
+.seo-grid .text-link { display: inline-block; margin-top: 1rem; margin-right: 1rem; font-size: .82rem; }
+.seo-hero { max-width: 880px; margin: auto; padding: 5rem 1.25rem 4rem; text-align: center; }
+.seo-hero > .text-link { display: inline-block; margin-bottom: 1.5rem; }
+.seo-hero h1 { margin-top: 1rem; font-size: clamp(2.5rem, 6vw, 4.8rem); font-weight: 680; line-height: 1.02; letter-spacing: -.06em; }
+.seo-hero > p:not(.eyebrow) { max-width: 720px; margin: 1.5rem auto 2rem; color: var(--muted); font-size: 1.08rem; line-height: 1.75; }
+.seo-article-layout { display: grid; max-width: 1080px; margin: auto; gap: 3rem; padding: 2rem 1.25rem 7rem; }
+.seo-article { min-width: 0; }
+.seo-article section { padding: 2.5rem 0; border-top: 1px solid var(--border); }
+.seo-article h2 { font-size: clamp(1.55rem, 3vw, 2.15rem); font-weight: 650; letter-spacing: -.035em; }
+.seo-article p { margin-top: 1rem; color: var(--muted); line-height: 1.8; }
+.seo-article ul { display: grid; gap: .75rem; margin-top: 1.25rem; }
+.seo-article li { display: flex; align-items: flex-start; gap: .6rem; line-height: 1.6; }
+.seo-article li svg { flex: 0 0 auto; margin-top: .2rem; color: var(--accent); }
+.seo-resources { align-self: start; padding: 1.25rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.seo-resources h2 { margin-bottom: .7rem; font-size: .85rem; font-weight: 750; }
+.seo-resources a { display: flex; justify-content: space-between; gap: .5rem; padding: .75rem 0; border-top: 1px solid var(--border); color: var(--muted); font-size: .82rem; }
+.seo-resources a:hover { color: var(--accent); }
+.seo-faq { margin-top: 1.25rem; }
+.seo-faq details { border-top: 1px solid var(--border); padding: 1rem 0; }
+.seo-faq summary { cursor: pointer; font-weight: 650; }
+.seo-faq details p { margin-top: .7rem; }
+.roi-calculator { padding: 1.5rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.roi-calculator-grid { display: grid; gap: 1rem; }
+.roi-result { margin-top: 1.25rem; padding: 1.25rem; border-radius: .8rem; background: var(--accent-soft); }
+.roi-result span, .roi-result strong { display: block; }
+.roi-result span { color: var(--muted); font-size: .78rem; }
+.roi-result strong { margin-top: .35rem; color: var(--accent); font-size: 2rem; }
 .landing-cta { display: flex; margin: 2rem 1.25rem 5rem; align-items: center; flex-direction: column; padding: 5rem 1.5rem; border-radius: 1.5rem; color: white; text-align: center; background: radial-gradient(circle at 25% 0%, #1d5e50, transparent 35%), #0b2420; }
 .landing-cta > svg { color: #60dab9; }
 .landing-cta p { margin: 1rem 0 2rem; color: #ffffffa8; }
@@ -64,5 +91,8 @@
   .guide-step.reverse { grid-template-columns: 1.25fr .75fr; }
   .guide-step.reverse .step-copy { order: 2; }
   .seo-grid { grid-template-columns: repeat(3, 1fr); }
+  .seo-article-layout { grid-template-columns: minmax(0, 1fr) 280px; }
+  .seo-resources { position: sticky; top: 1.5rem; }
+  .roi-calculator-grid { grid-template-columns: 1fr 1fr; }
   .landing-cta { margin-inline: auto; max-width: 1140px; }
 }

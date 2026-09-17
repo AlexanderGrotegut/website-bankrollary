@@ -73,14 +73,18 @@ export default function Home() {
             <article>
               <h3>Poker bankroll tracker</h3>
               <p>Track cash games and tournaments with buy-in, cash-out, profit, ROI, duration and hourly rate. Compare poker rooms and review your complete session history.</p>
+              <Link href="/poker-bankroll-tracker" className="text-link">Explore poker tracking</Link>
             </article>
             <article>
               <h3>Betting and casino tracker</h3>
               <p>Monitor sports betting, blackjack, roulette and slots results by platform and currency while keeping deposits and withdrawals separate from profit.</p>
+              <Link href="/sports-betting-tracker" className="text-link">Explore betting tracking</Link>
             </article>
             <article>
               <h3>Bankroll analytics</h3>
               <p>Use weekly, monthly, yearly and all-time views to analyze bankroll development, game performance and results across multiple currencies.</p>
+              <Link href="/bankroll-management-guide" className="text-link">Read the bankroll guide</Link>
+              <Link href="/poker-roi-calculator" className="text-link">Use the ROI calculator</Link>
             </article>
           </div>
         </section>

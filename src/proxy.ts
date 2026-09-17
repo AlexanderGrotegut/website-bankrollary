@@ -12,6 +12,10 @@ const PUBLIC_PATHS = new Set([
   "/robots.txt",
   "/manifest.webmanifest",
   "/opengraph-image",
+  "/poker-bankroll-tracker",
+  "/bankroll-management-guide",
+  "/poker-roi-calculator",
+  "/sports-betting-tracker",
 ]);
 
 export async function proxy(request: NextRequest) {
