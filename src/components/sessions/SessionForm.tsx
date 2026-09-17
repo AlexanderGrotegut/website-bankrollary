@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { saveSessionAction } from "@/app/actions/sessions";
 import { calculateSessionMetrics } from "@/lib/calculations";
 import { CURRENCIES, formatDuration, formatMoney } from "@/lib/domain";
+import { triggerHaptic } from "@/lib/haptics";
 
 export type EditableSession = {
   id: string;
@@ -44,6 +45,12 @@ export function SessionForm({
 }: Props) {
   const timezoneOffsetRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(saveSessionAction, {});
+
+  useEffect(() => {
+    if (state.success) triggerHaptic("success");
+    if (state.error) triggerHaptic("error");
+  }, [state]);
+
   const [gameCategoryId, setGameCategoryId] = useState(
     session?.gameCategoryId ?? defaultGameCategoryId ?? "",
   );

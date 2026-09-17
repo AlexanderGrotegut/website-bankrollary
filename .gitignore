@@ -43,3 +43,10 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# capacitor - generated web assets inside native projects
+ios/App/App/public/
+android/app/src/main/assets/public/
+
+# capacitor - generated PWA icons
+icons/

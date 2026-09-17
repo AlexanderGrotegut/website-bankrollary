@@ -2,6 +2,7 @@ import { Activity, Clock3, Percent, Plus, TrendingUp, Wallet } from "lucide-reac
 import Link from "next/link";
 import { BankrollChart } from "@/components/dashboard/BankrollChart";
 import { PerformanceBreakdowns } from "@/components/dashboard/PerformanceBreakdowns";
+import { HideOnNative } from "@/components/HideOnNative";
 import { buildAnalytics, periodStart, type Period } from "@/lib/analytics";
 import { requireUser } from "@/lib/auth";
 import { buildBreakdowns } from "@/lib/breakdowns";
@@ -206,6 +207,7 @@ export default async function DashboardPage({
       </section>
       <PerformanceBreakdowns {...breakdowns} currency={selected.currency} />
 
+      <HideOnNative>
       <section className="panel mt-6">
         <div className="panel-heading">
           <div><h2>Recent activity</h2><p>Sessions, deposits and withdrawals in {selected.currency}</p></div>
@@ -253,6 +255,7 @@ export default async function DashboardPage({
           </table>
         </div>
       </section>
+      </HideOnNative>
     </>
   );
 }

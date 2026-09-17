@@ -1,11 +1,16 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { finishSessionAction } from "@/app/actions/sessions";
+import { triggerHaptic } from "@/lib/haptics";
 
 export function FinishSessionForm({ id }: { id: string }) {
   const timezoneOffsetRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(finishSessionAction, {});
+
+  useEffect(() => {
+    if (state.error) triggerHaptic("error");
+  }, [state]);
 
   return (
     <form

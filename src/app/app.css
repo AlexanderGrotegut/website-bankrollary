@@ -1,5 +1,5 @@
 .app-shell { min-height: 100vh; }
-.app-nav { position: sticky; top: 0; z-index: 30; display: flex; overflow-x: auto; align-items: center; gap: 1rem; min-height: 4.5rem; padding: .75rem 1rem; border-bottom: 1px solid var(--border); background: #ffffffed; backdrop-filter: blur(14px); }
+.app-nav { position: sticky; top: 0; z-index: 30; display: flex; overflow-x: auto; align-items: center; gap: 1rem; min-height: 4.5rem; padding: .75rem 1rem; padding-top: max(.75rem, env(safe-area-inset-top)); border-bottom: 1px solid var(--border); background: #ffffffed; backdrop-filter: blur(14px); }
 .app-nav > .brand { display: none; }
 .nav-link { display: flex; align-items: center; gap: .7rem; white-space: nowrap; border-radius: .65rem; padding: .65rem .8rem; color: var(--muted); font-size: .83rem; font-weight: 600; }
 .nav-link:hover { color: var(--foreground); background: #f2f5f4; }

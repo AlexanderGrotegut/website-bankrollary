@@ -1,0 +1,17 @@
+import { Capacitor } from "@capacitor/core";
+
+export function isNativePlatform() {
+  return Capacitor.isNativePlatform();
+}
+
+export function getPlatform() {
+  return Capacitor.getPlatform();
+}
+
+export function isIos() {
+  return Capacitor.getPlatform() === "ios";
+}
+
+export function isAndroid() {
+  return Capacitor.getPlatform() === "android";
+}
