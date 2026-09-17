@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -20,7 +20,22 @@ export function BankrollChart({
   currency: string;
 }) {
   const [axisMode, setAxisMode] = useState<"date" | "sessions">("date");
-  const chartData = data.map((point, index) => ({
+
+  const dateConsolidated = useMemo(() => {
+    const byDate = new Map<string, { date: string; value: number }>();
+    for (const point of data) {
+      const key = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(point.date));
+      byDate.set(key, point);
+    }
+    return [...byDate.values()];
+  }, [data]);
+
+  const source = axisMode === "date" ? dateConsolidated : data;
+  const chartData = source.map((point, index) => ({
     ...point,
     label: new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
