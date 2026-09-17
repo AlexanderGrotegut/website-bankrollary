@@ -71,7 +71,7 @@ export default async function SettingsPage() {
       <header className="page-header">
         <div><p className="eyebrow">Configuration</p><h1>Settings</h1><p>Manage currencies, platforms, game types and your global bankroll.</p></div>
       </header>
-      <div className="mt-8 grid gap-6 xl:grid-cols-2">
+      <div className="mt-8 grid gap-6 xl:grid-cols-3">
         <section className="panel">
           <div className="panel-heading"><div><h2>Default currency</h2><p>Preselected for new sessions and currency conversion</p></div></div>
           <CurrencySettingsForm defaultCurrency={settings.defaultCurrency} />
@@ -86,33 +86,30 @@ export default async function SettingsPage() {
             {!platforms.length && <p className="empty-row">No platform created yet.</p>}
           </div>
         </section>
+        <section className="panel">
+          <div className="panel-heading"><div><h2>Game types</h2><p>Built-in and custom types</p></div></div>
+          <GameCategoryForm />
+          <div className="settings-list mt-5">
+            {builtInCategories.map((category) => {
+              const hidden = category.hiddenFor.length > 0;
+              return (
+                <div key={category.id}>
+                  <span>
+                    <strong className={hidden ? "line-through opacity-50" : ""}>{category.name}</strong>
+                    <small className="text-[var(--muted)]">built-in</small>
+                  </span>
+                  {hidden
+                    ? <RestoreBuiltInGameCategoryButton id={category.id} />
+                    : <HideBuiltInGameCategoryButton id={category.id} />}
+                </div>
+              );
+            })}
+            {customCategories.map((category) => (
+              <div key={category.id}><span><strong>{category.name}</strong><small>{category._count.sessions} sessions</small></span><DeleteGameCategoryButton id={category.id} /></div>
+            ))}
+          </div>
+        </section>
       </div>
-      <section className="panel mt-6">
-        <div className="panel-heading"><div><h2>Built-in game types</h2><p>Remove types only from your own account</p></div></div>
-        <div className="settings-list">
-          {builtInCategories.map((category) => {
-            const hidden = category.hiddenFor.length > 0;
-            return (
-              <div key={category.id}>
-                <span><strong>{category.name}</strong><small>{hidden ? "Removed from your selections" : "Available in your selections"}</small></span>
-                {hidden
-                  ? <RestoreBuiltInGameCategoryButton id={category.id} />
-                  : <HideBuiltInGameCategoryButton id={category.id} />}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-      <section className="panel mt-6">
-        <div className="panel-heading"><div><h2>Custom game types</h2><p>Only you can see and select the game types you create</p></div></div>
-        <GameCategoryForm />
-        <div className="settings-list mt-5">
-          {customCategories.map((category) => (
-            <div key={category.id}><span><strong>{category.name}</strong><small>{category._count.sessions} sessions</small></span><DeleteGameCategoryButton id={category.id} /></div>
-          ))}
-          {!customCategories.length && <p className="empty-row">No custom game types yet.</p>}
-        </div>
-      </section>
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
         <section className="panel">
           <div className="panel-heading"><div><h2>Email address</h2><p>Change the address you use to sign in</p></div></div>
