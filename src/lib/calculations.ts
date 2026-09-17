@@ -17,8 +17,10 @@ export function calculateSessionMetrics(session: SessionNumbers): SessionMetrics
     return { profit: null, durationMinutes: null, roi: null, hourlyRate: null };
   }
 
-  const durationMinutes =
-    (session.endedAt.getTime() - session.startedAt.getTime()) / 60_000;
+  const durationMinutes = Math.max(
+    0,
+    (session.endedAt.getTime() - session.startedAt.getTime()) / 60_000,
+  );
   const profit = session.cashOut - session.buyIn;
   const roi = session.buyIn > 0 ? (profit / session.buyIn) * 100 : null;
   const hourlyRate =

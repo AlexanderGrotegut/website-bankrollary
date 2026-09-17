@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useMemo, useRef, useState } from "react";
 import { saveSessionAction } from "@/app/actions/sessions";
 import { calculateSessionMetrics } from "@/lib/calculations";
 import { CURRENCIES, formatDuration, formatMoney } from "@/lib/domain";
@@ -42,6 +42,7 @@ export function SessionForm({
   defaultPlatformId,
   session,
 }: Props) {
+  const timezoneOffsetRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(saveSessionAction, {});
   const [gameCategoryId, setGameCategoryId] = useState(
     session?.gameCategoryId ?? defaultGameCategoryId ?? "",
@@ -71,8 +72,17 @@ export function SessionForm({
   );
 
   return (
-    <form action={action} className="space-y-7">
+    <form
+      action={action}
+      className="space-y-7"
+      onSubmit={() => {
+        if (timezoneOffsetRef.current) {
+          timezoneOffsetRef.current.value = String(new Date().getTimezoneOffset());
+        }
+      }}
+    >
       {session && <input type="hidden" name="id" value={session.id} />}
+      <input ref={timezoneOffsetRef} type="hidden" name="timezoneOffset" defaultValue="0" />
       <input type="hidden" name="isRunning" value={String(running)} />
       <input type="hidden" name="convertToDefaultCurrency" value={String(convert)} />
       <div className="form-grid">

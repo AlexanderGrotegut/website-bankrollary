@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -18,21 +19,42 @@ export function BankrollChart({
   data: { date: string; value: number }[];
   currency: string;
 }) {
-  const chartData = data.map((point) => ({
+  const [axisMode, setAxisMode] = useState<"date" | "sessions">("date");
+  const chartData = data.map((point, index) => ({
     ...point,
     label: new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "short",
     }).format(new Date(point.date)),
+    sessionLabel: index === 0 ? "Start" : String(index),
   }));
 
   return (
-    <div className="h-[310px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <>
+      <div className="mb-4 flex justify-end">
+        <div className="segmented">
+          <button
+            className={axisMode === "date" ? "active" : ""}
+            type="button"
+            onClick={() => setAxisMode("date")}
+          >
+            Date
+          </button>
+          <button
+            className={axisMode === "sessions" ? "active" : ""}
+            type="button"
+            onClick={() => setAxisMode("sessions")}
+          >
+            Sessions
+          </button>
+        </div>
+      </div>
+      <div className="h-[310px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 12, right: 8, left: 4, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
-            dataKey="label"
+            dataKey={axisMode === "date" ? "label" : "sessionLabel"}
             axisLine={false}
             tickLine={false}
             tick={{ fill: "var(--muted)", fontSize: 12 }}
@@ -66,7 +88,8 @@ export function BankrollChart({
             activeDot={{ r: 5, fill: "var(--accent)" }}
           />
         </LineChart>
-      </ResponsiveContainer>
-    </div>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 }

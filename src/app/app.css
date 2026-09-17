@@ -12,8 +12,8 @@
 .panel-heading h2, .panel > h2 { font-size: 1rem; font-weight: 700; letter-spacing: -.015em; }
 .panel-heading p { margin-top: .2rem; color: var(--muted); font-size: .76rem; }
 .segmented { display: inline-flex; gap: .2rem; padding: .25rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--panel); }
-.segmented a { border-radius: .55rem; padding: .45rem .75rem; color: var(--muted); font-size: .78rem; font-weight: 600; }
-.segmented a.active { color: var(--foreground); background: var(--accent-soft); }
+.segmented a, .segmented button { border-radius: .55rem; padding: .45rem .75rem; color: var(--muted); font-size: .78rem; font-weight: 600; }
+.segmented a.active, .segmented button.active { color: var(--foreground); background: var(--accent-soft); }
 .currency-chip { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: .38rem .65rem; color: var(--muted); background: var(--panel); font-size: .7rem; font-weight: 750; }
 .currency-chip.active { border-color: #9bdac9; color: var(--accent); background: var(--accent-soft); }
 .metric-grid { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); }

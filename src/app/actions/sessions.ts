@@ -14,11 +14,39 @@ function refreshSessionPages() {
   revalidatePath("/sessions");
 }
 
+function normalizeLocalDateTimes(formData: FormData) {
+  const offset = z.coerce
+    .number()
+    .int()
+    .min(-840)
+    .max(840)
+    .safeParse(formData.get("timezoneOffset"));
+  if (!offset.success) return false;
+
+  for (const field of ["startedAt", "endedAt"]) {
+    const value = formData.get(field);
+    if (typeof value !== "string" || value === "") continue;
+    const parts = value.match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
+    );
+    if (!parts) return false;
+    const [, year, month, day, hours, minutes] = parts;
+    const utcTime =
+      Date.UTC(+year, +month - 1, +day, +hours, +minutes) +
+      offset.data * 60_000;
+    formData.set(field, new Date(utcTime).toISOString());
+  }
+  return true;
+}
+
 export async function saveSessionAction(
   _previous: FormState,
   formData: FormData,
 ): Promise<FormState> {
   const user = await requireUser();
+  if (!normalizeLocalDateTimes(formData)) {
+    return { error: "Enter a valid date and time." };
+  }
   const parsed = sessionSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check your input." };
@@ -120,6 +148,7 @@ export async function finishSessionAction(
     .object({
       id: z.string().cuid(),
       cashOut: z.coerce.number().min(0).max(999_999_999),
+      timezoneOffset: z.coerce.number().int().min(-840).max(840),
     })
     .safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Enter a valid cash-out." };
@@ -133,6 +162,14 @@ export async function finishSessionAction(
   if (!session) return { error: "Running session not found." };
 
   const endedAt = new Date();
+  const correctedStartedAt = new Date(
+    session.startedAt.getTime() + parsed.data.timezoneOffset * 60_000,
+  );
+  const startedAt =
+    session.startedAt > endedAt ? correctedStartedAt : session.startedAt;
+  if (startedAt >= endedAt) {
+    return { error: "The session start time is in the future. Edit it before completing." };
+  }
   let snapshot;
   try {
     snapshot = await buildSessionSnapshot({
@@ -149,7 +186,7 @@ export async function finishSessionAction(
 
   await prisma.session.update({
     where: { id: session.id },
-    data: { endedAt, cashOut: parsed.data.cashOut, ...snapshot },
+    data: { startedAt, endedAt, cashOut: parsed.data.cashOut, ...snapshot },
   });
   refreshSessionPages();
   return { success: "Session completed." };
