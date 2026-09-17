@@ -29,7 +29,7 @@ export default async function NewSessionPage() {
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
     prisma.session.findFirst({
       where: { userId: user.id },
-      orderBy: { startedAt: "desc" },
+      orderBy: { createdAt: "desc" },
       select: { gameCategoryId: true, platformId: true },
     }),
   ]);

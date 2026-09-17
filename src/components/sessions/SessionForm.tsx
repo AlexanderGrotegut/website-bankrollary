@@ -52,7 +52,7 @@ export function SessionForm({
   const [running, setRunning] = useState(session ? !session.endedAt : false);
   const [convert, setConvert] = useState(session?.convertToDefaultCurrency ?? false);
   const [buyIn, setBuyIn] = useState<number | "">(session?.buyIn ?? "");
-  const [cashOut, setCashOut] = useState(session?.cashOut ?? 0);
+  const [cashOut, setCashOut] = useState<number | "">(session?.cashOut ?? "");
   const [currency, setCurrency] = useState(session?.currency ?? defaultCurrency);
   const [startedAt, setStartedAt] = useState(session?.startedAt ?? localDateTime());
   const [endedAt, setEndedAt] = useState(() =>
@@ -63,7 +63,7 @@ export function SessionForm({
     () =>
       calculateSessionMetrics({
         buyIn: buyIn === "" ? 0 : buyIn,
-        cashOut: running ? null : cashOut,
+        cashOut: running ? null : cashOut === "" ? 0 : cashOut,
         startedAt: new Date(startedAt),
         endedAt: running ? null : new Date(endedAt),
       }),
@@ -83,7 +83,7 @@ export function SessionForm({
         <label className="field"><span>Start</span><input name="startedAt" type="datetime-local" value={startedAt} onChange={(event) => setStartedAt(event.target.value)} required /></label>
         {!running && <label className="field"><span>End</span><input name="endedAt" type="datetime-local" value={endedAt} onChange={(event) => setEndedAt(event.target.value)} required /></label>}
         <label className="field"><span>Buy-in</span><div className="input-affix"><input name="buyIn" type="number" min="0" step="0.01" placeholder="0" value={buyIn} onChange={(event) => setBuyIn(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>
-        {!running && <label className="field"><span>Cash-out</span><div className="input-affix"><input name="cashOut" type="number" min="0" step="0.01" value={cashOut} onChange={(event) => setCashOut(event.target.valueAsNumber || 0)} required /><b>{currency}</b></div></label>}
+        {!running && <label className="field"><span>Cash-out</span><div className="input-affix"><input name="cashOut" type="number" min="0" step="0.01" placeholder="0" value={cashOut} onChange={(event) => setCashOut(event.target.value === "" ? "" : event.target.valueAsNumber)} required /><b>{currency}</b></div></label>}
         <Toggle checked={running} onChange={setRunning} title="Running session" detail="Add cash-out and end time later" />
       </div>
       {session?.exchangeRate && session.convertedCurrency && (
