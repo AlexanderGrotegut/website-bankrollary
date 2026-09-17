@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/actions/auth";
 
 const links = [
-  { href: "/dashboard", label: "Overview", icon: BarChart3 },
+  { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
   { href: "/sessions/neu", label: "Track session", icon: PlusCircle },
   { href: "/sessions", label: "Sessions", icon: History },
   { href: "/einstellungen", label: "Settings", icon: Settings },

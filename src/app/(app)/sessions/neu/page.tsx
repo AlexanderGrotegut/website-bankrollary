@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 export default async function NewSessionPage() {
   const user = await requireUser();
-  const [platforms, gameCategories, settings] = await Promise.all([
+  const [platforms, gameCategories, settings, previousSession] = await Promise.all([
     prisma.platform.findMany({
       where: { userId: user.id, archivedAt: null },
       orderBy: { name: "asc" },
@@ -27,7 +27,22 @@ export default async function NewSessionPage() {
       select: { id: true, name: true },
     }),
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
+    prisma.session.findFirst({
+      where: { userId: user.id },
+      orderBy: { startedAt: "desc" },
+      select: { gameCategoryId: true, platformId: true },
+    }),
   ]);
+  const defaultGameCategoryId = gameCategories.some(
+    ({ id }) => id === previousSession?.gameCategoryId,
+  )
+    ? previousSession?.gameCategoryId ?? undefined
+    : undefined;
+  const defaultPlatformId = platforms.some(
+    ({ id }) => id === previousSession?.platformId,
+  )
+    ? previousSession?.platformId ?? undefined
+    : undefined;
 
   return (
     <>
@@ -40,7 +55,13 @@ export default async function NewSessionPage() {
       </header>
       <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="panel">
-          <SessionForm platforms={platforms} gameCategories={gameCategories} defaultCurrency={settings.defaultCurrency} />
+          <SessionForm
+            platforms={platforms}
+            gameCategories={gameCategories}
+            defaultCurrency={settings.defaultCurrency}
+            defaultGameCategoryId={defaultGameCategoryId}
+            defaultPlatformId={defaultPlatformId}
+          />
         </section>
         <aside className="panel self-start">
           <h2>Missing a platform?</h2>
