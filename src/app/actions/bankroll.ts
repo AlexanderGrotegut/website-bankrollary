@@ -21,7 +21,7 @@ export async function saveTransactionAction(
     data: { ...parsed.data, note: parsed.data.note || null, userId: user.id },
   });
   revalidatePath("/dashboard");
-  revalidatePath("/einstellungen");
+  revalidatePath("/bankroll");
   return { success: "Transaction saved." };
 }
 
@@ -34,7 +34,7 @@ export async function deleteTransactionAction(formData: FormData) {
     where: { id: id.data, userId: user.id },
   });
   revalidatePath("/dashboard");
-  revalidatePath("/einstellungen");
+  revalidatePath("/bankroll");
 }
 
 export async function saveSettingsAction(

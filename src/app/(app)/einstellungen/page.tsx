@@ -1,7 +1,4 @@
-import { MessageSquarePlus, Trash2 } from "lucide-react";
-import {
-  deleteTransactionAction,
-} from "@/app/actions/bankroll";
+import { MessageSquarePlus } from "lucide-react";
 import {
   DeleteGameCategoryButton,
   DeletePlatformButton,
@@ -15,19 +12,9 @@ import {
 import { FeedbackForm } from "@/components/settings/FeedbackForm";
 import { GameCategoryForm } from "@/components/settings/GameCategoryForm";
 import { PlatformForm } from "@/components/settings/PlatformForm";
-import {
-  CurrencySettingsForm,
-  TransactionForm,
-} from "@/components/settings/SettingsForms";
+import { CurrencySettingsForm } from "@/components/settings/SettingsForms";
 import { requireUser } from "@/lib/auth";
-import { formatMoney } from "@/lib/domain";
 import { prisma } from "@/lib/prisma";
-
-const transactionLabels = {
-  STARTING_BALANCE: "Starting balance",
-  DEPOSIT: "Deposit",
-  WITHDRAWAL: "Withdrawal",
-};
 
 export default async function SettingsPage() {
   const user = await requireUser();
@@ -36,7 +23,6 @@ export default async function SettingsPage() {
     platforms,
     builtInCategories,
     customCategories,
-    transactions,
   ] = await Promise.all([
     prisma.userSettings.findUniqueOrThrow({ where: { userId: user.id } }),
     prisma.platform.findMany({
@@ -59,17 +45,12 @@ export default async function SettingsPage() {
       orderBy: { name: "asc" },
       include: { _count: { select: { sessions: true } } },
     }),
-    prisma.bankrollTransaction.findMany({
-      where: { userId: user.id },
-      orderBy: { occurredAt: "desc" },
-      take: 20,
-    }),
   ]);
 
   return (
     <>
       <header className="page-header">
-        <div><p className="eyebrow">Configuration</p><h1>Settings</h1><p>Manage currencies, platforms, game types and your global bankroll.</p></div>
+        <div><p className="eyebrow">Configuration</p><h1>Settings</h1><p>Manage currencies, platforms and game types.</p></div>
       </header>
       <div className="mt-8 grid gap-6 xl:grid-cols-3">
         <section className="panel">
@@ -120,22 +101,6 @@ export default async function SettingsPage() {
           <PasswordForm />
         </section>
       </div>
-      <section className="panel mt-6">
-        <div className="panel-heading"><div><h2>Bankroll transaction</h2><p>Deposits and withdrawals change your bankroll, but not your P/L. Withdrawals can take the balance below zero.</p></div></div>
-        <TransactionForm defaultCurrency={settings.defaultCurrency} />
-      </section>
-      <section className="panel mt-6">
-        <div className="panel-heading"><div><h2>Recent transactions</h2><p>Global bankroll movements</p></div></div>
-        <div className="settings-list">
-          {transactions.map((transaction) => {
-            const signed = transaction.type === "WITHDRAWAL" ? -Number(transaction.amount) : Number(transaction.amount);
-            return (
-              <div key={transaction.id}><span><strong>{transactionLabels[transaction.type]}</strong><small>{transaction.note || transaction.occurredAt.toLocaleDateString("en-GB")}</small></span><span className={signed >= 0 ? "positive" : "negative"}>{formatMoney(signed, transaction.currency)}</span><form action={deleteTransactionAction}><input type="hidden" name="id" value={transaction.id} /><button title="Delete"><Trash2 size={16} /></button></form></div>
-            );
-          })}
-          {!transactions.length && <p className="empty-row">No bankroll transactions yet.</p>}
-        </div>
-      </section>
       <section className="panel mt-6">
         <div className="panel-heading">
           <div><h2><MessageSquarePlus size={18} className="mr-2 inline-block align-text-bottom" />Feedback &amp; Ideas</h2><p>Help us improve Bankrollary — your message goes directly to the team</p></div>

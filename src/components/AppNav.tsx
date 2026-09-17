@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowLeftRight,
   BarChart3,
   History,
   LogOut,
@@ -15,6 +16,7 @@ import { logoutAction } from "@/app/actions/auth";
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
   { href: "/sessions/neu", label: "Track session", icon: PlusCircle },
+  { href: "/bankroll", label: "Bankroll", icon: ArrowLeftRight },
   { href: "/sessions", label: "Sessions", icon: History },
   { href: "/einstellungen", label: "Settings", icon: Settings },
 ];
