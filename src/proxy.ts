@@ -8,6 +8,10 @@ const PUBLIC_PATHS = new Set([
   "/passwort-vergessen",
   "/passwort",
   "/auth/callback",
+  "/sitemap.xml",
+  "/robots.txt",
+  "/manifest.webmanifest",
+  "/opengraph-image",
 ]);
 
 export async function proxy(request: NextRequest) {
