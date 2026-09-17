@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from "@capacitor/cli";
+import { KeyboardResize } from "@capacitor/keyboard";
 
 const config: CapacitorConfig = {
   appId: "com.bankrollary.app",
@@ -22,7 +23,7 @@ const config: CapacitorConfig = {
       backgroundColor: "#0a0a0a",
     },
     Keyboard: {
-      resize: "body",
+      resize: KeyboardResize.Body,
       resizeOnFullScreen: true,
     },
   },
